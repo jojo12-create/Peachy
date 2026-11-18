@@ -1,0 +1,118 @@
+# DESIGN — Peachy Lymphatic Therapy
+
+Règles de design du site. À lire avant de construire ou de modifier une interface.
+Les valeurs vivent dans `assets/css/tokens.css` : on y ajoute, on ne les contourne pas.
+
+## Direction
+
+Une maison de soin, pas un centre esthétique. Deux univers du moodboard, fusionnés dans une seule page
+qui alterne les chapitres :
+
+- **Chocolat immersif** (hero, drainage, geste, réservation, pied de page) : chocolat profond, lumière chaude, peau, gestes.
+- **Crème éditoriale** (philosophie, rituels, univers, expérience) : ivoire, crème, sable, enduit, ombres végétales.
+
+La beauté tient à la composition, aux proportions, à la lumière, à la typographie et aux matières.
+Jamais à un effet.
+
+## Couleur
+
+- **Palette fermée** : `--chocolat-nuit` `--chocolat` `--cacao` `--terracotta` `--taupe` `--sable` `--creme` `--ivoire`.
+  Pas de noir absolu ni de blanc pur, y compris dans les ombres (toujours `rgb(40 23 15 / α)`).
+- **Texte** : `--encre` / `--encre-douce` sur fonds clairs, `--lumiere` / `--lumiere-douce` sur fonds sombres.
+  Le texte secondaire est teinté de la palette, jamais gris.
+- **Terracotta** : accent rare (filets, guillemet, sélection, focus). Jamais en aplat ni pour du texte courant
+  (3,7:1 sur crème : réservé aux grands éléments).
+
+## Typographie
+
+- **Playfair Display 400** (romain et italique) pour titres, phrases de marque et citations ;
+  **Inter** pour navigation, boutons, descriptions. Polices hébergées dans `assets/fonts`.
+- L'emphase d'un titre passe par l'**italique** (`<em>`), jamais par la graisse ni la couleur.
+- Tailles fluides (`--t-*`), titres équilibrés (`text-wrap: balance`), paragraphes courts (≤ 38em).
+- **Aucun texte utile sous 12 px.** Le sous-titre du logo dans la barre (9 px) fait partie du logo, doublé par un `aria-label`.
+- **Pas de surtitre** au-dessus d'un titre, pas de numéros de section.
+
+## Matières
+
+- Chaque fond = une couleur de la palette + une matière transparente posée dessus
+  (`.fond-chocolat`, `.fond-nuit`, `.fond-ivoire`, `.fond-creme`, `.fond-sable`).
+  Les matières sont générées par `tools/textures.py` (papier, enduit, chocolat, lin, ombre de palme).
+- Les matières restent à la limite du visible. Si un motif répété se lit, la texture est trop forte.
+- Les ombres végétales (`.ombre-vegetale`) ne se posent que derrière le contenu, jamais sur du texte.
+- Le symbole du logo peut être **débossé** dans un fond sombre (section Réserver). Jamais au détriment d'un texte.
+
+## Surfaces, cartes, ombres
+
+- Une carte se détache par **contraste de matière et ombre de contact** (`--ombre-carte`), jamais par une bordure épaisse.
+- Rayons légers : `--rayon-bouton` 3 px, `--rayon-photo` 4 px, `--rayon-carte` 6 px.
+  La seule forme ronde est l'**arche** (`--rayon-arche`), motif repris des niches du lieu.
+- Pas de carte dans une carte.
+
+## Boutons
+
+- Trois variantes, une seule forme : `.btn--ivoire` (principal sur fond sombre), `.btn--chocolat` (principal sur fond clair),
+  `.btn--contour` (secondaire). Hauteur 52 px (44 px en `.btn--petit`).
+- Pas de brillance, pas de dégradé visible, pas de bordure lourde.
+- Survol : montée de 1 px et ombre plus profonde. Pression : `scale(0.97)` en 140 ms.
+
+## Photographie
+
+- **Seules les vraies photographies de Peachy sont utilisées.** Pas de banque d'images, pas de visuel généré de toutes pièces.
+  <!-- 2026-11-18 : grille Instagram de Peachy fournie en réponse à la question des visuels provisoires -->
+- **Une photo n'est jamais prolongée par un flou, un fondu ou un dégradé pour atteindre un format.**
+  Si un format exige plus d'image, on génère la suite de l'image (outpainting) pour qu'elle se lise comme une seule
+  photographie ; si ce n'est pas possible, la mise en page s'adapte au format natif de la photo.
+  Pourquoi : le prolongement doit se lire « comme si c'était une même image ».
+  <!-- 2026-11-18 : « Non je te demande pas de généré un fondu mais de générer le reste de l'image comme si c'était une même image. Quand c'est nécéssaire » -->
+- **Quand une photo est étendue, la photo d'origine reste exacte au centre** ; seuls les bords ajoutés sont générés.
+  <!-- 2026-11-18 : « ajouter des bords au photo en générant ce qui n'est pas tout en gardant la photo exacte au centre s'il faut faire correspondre les photos à un format spécifique » -->
+- Un dégradé chocolat peut couvrir une photo **pour la lisibilité d'un texte posé dessus**. Ce n'est pas un prolongement.
+- Les originaux (`photos/originaux`) ne sont jamais modifiés. Toute image du site sort de `tools/retouche.py`.
+- **Charte de retouche** : balance chaude, ombres chocolat, hautes lumières crème, noirs relevés, teintes froides
+  ramenées dans la palette, grain fin. Deux réglages : `chocolat` (sections sombres) et `creme` (sections claires).
+  Peau naturelle, aucune transformation du corps, aucun lissage.
+- Une photo n'apparaît qu'une fois sur la page. Aucune légende sous une image.
+- Une photo n'est jamais affichée au-delà de ce que sa définition permet : on réduit le cadre plutôt que d'agrandir un flou.
+
+## Mise en page
+
+- Une suite de **chapitres plein écran** (`min-height: 100svh`). Un contenu long peut dépasser la hauteur d'un écran.
+- Chaque chapitre a sa composition : diptyque (hero), asymétrie texte/arche (philosophie), photo pleine hauteur (drainage),
+  cartes (rituels), tableau à fond perdu (geste), galerie éditoriale (univers), colonne sobre (expérience), arche + appel (réserver).
+  Deux chapitres voisins ne partagent jamais la même structure.
+- Marges latérales égales : tout s'aligne sur `.cadre` (`--gouttiere`, `--largeur`).
+- Mobile d'abord. Les compositions éditoriales commencent à `62rem`.
+- Aucun défilement imposé : pas de scroll-jacking, pas de snap vertical.
+
+## Mouvement
+
+- Courbes : `--ease-out` (entrées, sorties, survols) et `--ease-in-out` (déplacements). Jamais `ease-in`, jamais `transition: all`.
+- Propriétés animées : `transform`, `opacity`, `clip-path`. Jamais `width`, `height`, `margin`, `top`, `left`.
+- **Hero** : une entrée au chargement (titre ligne à ligne, puis filet, texte, boutons). Rien ne bloque le clic.
+- **Révélations** (`data-reveal`) : `monte` pour le texte, `photo` pour les images (masque de bas en haut), `trait` pour les filets.
+  Une seule fois, décalages courts et dégressifs (`--pas`, `--i`). Le contenu est visible sans JavaScript.
+- **Liés au défilement** : dérive du hero, cadrage du geste, glissement du détail. En CSS (`animation-timeline`), amplitude minime.
+- Tout survol est derrière `@media (hover: hover) and (pointer: fine)`. Tout élément tactile a un état `:active`.
+- `prefers-reduced-motion` : plus aucun déplacement, un fondu court.
+- Pas d'animation sur ce qui s'utilise au clavier ou plusieurs fois par visite (liens de la barre, chapitres).
+
+## Mobile
+
+- `100svh` pour les chapitres, zones tactiles ≥ 44 px, `touch-action: manipulation`, pas de surbrillance au toucher.
+- Menu plein écran chocolat, grandes entrées Playfair, fermeture par Échap et au clic sur un lien.
+- L'accès à la réservation reste dans la barre à toutes les tailles. Rien de flottant par-dessus le contenu.
+- Les rituels défilent horizontalement (`scroll-snap`), avec un repère discret.
+
+## Contenu
+
+- Phrases courtes, sensorielles, sans cliché commercial.
+- **Aucune promesse médicale** : on décrit le soin, le geste, la sensation recherchée. Jamais un résultat.
+- **Rien n'est inventé** : ni adresse, ni tarif, ni durée, ni certification, ni témoignage.
+  Ce qui manque est listé dans `CONTENU-A-COMPLETER.md` et se règle dans `assets/js/config.js`.
+- Typographie française : apostrophe courbe, espace insécable avant `:` `;` `?` `!`, guillemets « ».
+
+## Accessibilité
+
+- Contraste ≥ 4,5:1 pour le texte courant, ≥ 3:1 pour les grands titres.
+- Lien d'évitement, focus visible à la palette, ordre des titres sans saut, `alt` descriptif sur chaque photo.
+- Le menu ouvert rend le reste de la page inerte ; Échap le referme et rend le focus au bouton.

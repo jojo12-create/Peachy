@@ -1,0 +1,8 @@
+# Versions haute définition intermédiaires (régénérables, lourdes)
+photos/hd/
+tools/__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.taste-skill/
+shots/

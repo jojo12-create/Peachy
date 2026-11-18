@@ -1,0 +1,884 @@
+/* ==========================================================================
+   Peachy — les chapitres de la page, dans l'ordre du parcours.
+   Mobile d'abord ; les compositions éditoriales arrivent à partir de 62rem.
+   ========================================================================== */
+
+/* ── 01 · Hero immersif (chocolat) ───────────────────────────────────────── */
+
+.hero {
+  justify-content: flex-end;
+  padding-top: calc(var(--entete) + env(safe-area-inset-top, 0px) + 2rem);
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile : la photo entière en haut de l'écran, le titre vient mordre dessus. */
+.hero__media,
+.hero__voile {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: min(70svh, 133.4vw);
+  z-index: -1;
+  overflow: hidden;
+}
+
+.hero__media picture,
+.hero__media img {
+  width: 100%;
+  height: 100%;
+}
+
+.hero__media img {
+  object-fit: cover;
+  object-position: 42% 50%;
+}
+
+/* Dégradé chocolat : lisibilité du titre, sans éteindre la photographie. */
+.hero__voile {
+  background:
+    linear-gradient(to top, rgb(40 23 15 / 1) 0%, rgb(40 23 15 / 0.7) 20%, rgb(40 23 15 / 0) 46%),
+    linear-gradient(to bottom, rgb(29 16 10 / 0.6) 0%, rgb(29 16 10 / 0) 22%);
+}
+
+.hero__contenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero .filet {
+  margin-block: 1.5rem 1.25rem;
+}
+
+.hero .chapo {
+  max-width: 27em;
+  color: var(--lumiere);
+}
+
+.hero__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.hero__suite {
+  position: absolute;
+  left: 50%;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  justify-content: flex-end;
+  translate: -50% 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--approche-label);
+  text-transform: uppercase;
+  color: var(--lumiere-douce);
+}
+
+.hero__suite-trait {
+  position: relative;
+  width: 1px;
+  height: 1.75rem;
+  background: var(--filet-clair);
+  overflow: hidden;
+}
+
+.hero__suite-trait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--lumiere);
+  transform: translateY(-100%);
+}
+
+@media (min-width: 36rem) {
+  .hero__actions {
+    flex-direction: row;
+    width: auto;
+  }
+}
+
+/* Grand écran : diptyque. La photo entière occupe le volet droit, sur toute la
+   hauteur ; le titre vit sur la matière chocolat et vient mordre sur l'image. */
+@media (min-width: 62rem) and (orientation: landscape) {
+  .hero {
+    justify-content: center;
+    padding-bottom: var(--section-y);
+  }
+  .hero__media,
+  .hero__voile {
+    inset: 0 0 0 auto;
+    height: auto;
+    width: min(52vw, 92svh);
+  }
+  .hero__media img {
+    object-position: 50% 50%;
+  }
+  .hero__voile {
+    background:
+      linear-gradient(to bottom, rgb(29 16 10 / 0.5) 0%, rgb(29 16 10 / 0) 20%),
+      linear-gradient(to right, rgb(29 16 10 / 0.42) 0%, rgb(29 16 10 / 0) 34%);
+  }
+  .hero__contenu {
+    max-width: none;
+  }
+  .hero .chapo {
+    max-width: 24em;
+  }
+  .hero .filet {
+    margin-block: 2rem 1.75rem;
+  }
+  .hero__actions {
+    margin-top: 2.5rem;
+  }
+  .hero__suite {
+    left: var(--gouttiere);
+    bottom: 1.75rem;
+    translate: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .hero__suite-trait {
+    width: 2.75rem;
+    height: 1px;
+  }
+  .hero__suite-trait::after {
+    transform: translateX(-100%);
+  }
+}
+
+/* ── 02 · La philosophie Peachy (crème éditoriale) ───────────────────────── */
+
+.philosophie__grille {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.philosophie__texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.philosophie .filet {
+  margin-block: 1.75rem;
+  color: var(--terracotta);
+  opacity: 0.8;
+}
+
+.philosophie .chapo + .texte {
+  margin-top: 1.25rem;
+}
+
+.philosophie__visuels {
+  position: relative;
+  width: min(100%, 24rem);
+  margin-inline: auto;
+  padding-bottom: 2.5rem;
+}
+
+.philosophie__portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.philosophie__portrait img {
+  object-position: 50% 30%;
+}
+
+.philosophie__detail {
+  position: absolute;
+  left: -0.75rem;
+  bottom: 0;
+  width: 38%;
+  aspect-ratio: 3 / 4;
+  box-shadow: var(--ombre-photo);
+}
+
+@media (min-width: 62rem) {
+  .philosophie__grille {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+  }
+  .philosophie__texte {
+    grid-column: 1;
+  }
+  .philosophie__visuels {
+    grid-column: 3;
+    width: min(100%, 29rem, 58svh);
+    margin-inline: auto 0;
+  }
+  .philosophie__detail {
+    left: -22%;
+    width: 42%;
+  }
+}
+
+/* ── 03 · Le drainage lymphatique (chocolat) ─────────────────────────────── */
+
+.drainage {
+  padding-block: 0;
+  justify-content: stretch;
+}
+
+.drainage__photo {
+  border-radius: 0;
+  aspect-ratio: 4 / 5;
+}
+
+.drainage__photo img {
+  object-position: 50% 40%;
+}
+
+.drainage__contenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--e-5) var(--gouttiere) var(--section-y);
+}
+
+.drainage .chapo {
+  margin-top: 1.5rem;
+  color: var(--lumiere);
+}
+
+.reperes {
+  display: grid;
+  gap: 1.5rem 2.5rem;
+  margin-block: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--filet-clair);
+  width: 100%;
+}
+
+.reperes dt {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1875rem;
+  line-height: 1.3;
+  color: var(--lumiere);
+}
+
+.reperes dd {
+  margin-top: 0.375rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--lumiere-douce);
+}
+
+@media (min-width: 36rem) {
+  .reperes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .drainage {
+    display: grid;
+    grid-template-columns: minmax(0, min(46vw, 82svh)) minmax(0, 1fr);
+  }
+  .drainage__photo {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 100svh;
+  }
+  .drainage__contenu {
+    justify-content: center;
+    padding: var(--section-y) clamp(2.5rem, 6vw, 7rem);
+  }
+  .drainage__contenu > * {
+    max-width: 36rem;
+  }
+}
+
+/* ── 04 · Les rituels (crème éditoriale) ─────────────────────────────────── */
+
+.rituels__entete {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: var(--e-4);
+}
+
+.rituels__liste {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(82%, 21rem);
+  gap: 1rem;
+  margin-inline: calc(var(--gouttiere) * -1);
+  padding: 0.5rem var(--gouttiere) 2.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gouttiere);
+  scrollbar-width: none;
+}
+
+.rituels__liste::-webkit-scrollbar {
+  display: none;
+}
+
+.rituels__liste > li {
+  scroll-snap-align: start;
+  display: flex;
+}
+
+.carte {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--rayon-carte);
+  /* lin naturel : une matière différente de l'enduit du fond */
+  background-color: var(--ivoire);
+  background-image: var(--matiere-lin);
+  background-size: 256px;
+  box-shadow: var(--relief-clair), var(--ombre-carte);
+  transition:
+    transform var(--d-survol) var(--ease-out),
+    box-shadow var(--d-survol) var(--ease-out);
+}
+
+.carte__photo {
+  aspect-ratio: 5 / 6;
+}
+
+@media (min-width: 62rem) {
+  .rituels {
+    padding-block: clamp(5rem, 10vh, 7rem);
+  }
+  .carte__photo {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+.carte__photo img {
+  transition: transform 700ms var(--ease-out);
+}
+
+.carte__corps {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.625rem;
+  padding: 1.375rem 0.625rem 0.5rem;
+}
+
+.carte__corps p {
+  font-size: 0.9375rem;
+  color: var(--encre-douce);
+}
+
+.carte .lien {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  align-self: flex-start;
+}
+
+/* Toute la carte est cliquable, le lien reste le seul élément focalisable. */
+.carte .lien::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--rayon-carte);
+}
+
+.carte:active {
+  transform: scale(0.99);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .carte:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--relief-clair), var(--ombre-carte-survol);
+  }
+  .carte:hover .carte__photo img {
+    transform: scale(1.03);
+  }
+  .carte:hover .lien__texte {
+    background-size: 0% 1px;
+    background-position: right 100%;
+  }
+  .carte:hover .btn__fleche {
+    transform: translateX(4px);
+  }
+}
+
+.rituels__points {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rituels__points span {
+  width: 1.25rem;
+  height: 1px;
+  background: var(--encre);
+  opacity: 0.25;
+  transition: opacity var(--d-survol) ease;
+}
+
+.rituels__points span[data-actif] {
+  opacity: 1;
+}
+
+@media (min-width: 62rem) {
+  .rituels__entete {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 0;
+    margin-bottom: var(--e-4);
+  }
+  .rituels__entete .texte {
+    grid-column: 3;
+  }
+  .rituels__liste {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 2.4vw, 2.25rem);
+    margin-inline: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .rituels__points {
+    display: none;
+  }
+  .carte {
+    padding: 0.875rem;
+  }
+  .carte__corps {
+    padding: 1.5rem 0.75rem 0.75rem;
+  }
+}
+
+/* ── 05 · Le geste & le savoir-faire (chocolat) ──────────────────────────── */
+/* La photographie reste à une taille qui respecte sa définition : pleine largeur
+   sur mobile, grand tableau à fond perdu à droite sur ordinateur. La phrase vient
+   mordre sur l'image. */
+
+.geste {
+  min-height: 0;
+  padding-top: 0;
+}
+
+.geste__media {
+  position: relative;
+  aspect-ratio: 4 / 3.3;
+  margin-bottom: var(--e-4);
+  overflow: hidden;
+}
+
+.geste__media picture,
+.geste__media img {
+  width: 100%;
+  height: 100%;
+}
+
+.geste__media img {
+  object-fit: cover;
+  object-position: 60% 50%;
+}
+
+.geste__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(40 23 15 / 0.75) 0%, rgb(40 23 15 / 0) 30%);
+}
+
+.geste__contenu {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.geste .phrase {
+  margin-top: -2.4em; /* la phrase chevauche le bas de la photographie */
+  position: relative;
+}
+
+.geste .chapo {
+  max-width: 26em;
+  color: var(--lumiere);
+}
+
+@media (min-width: 62rem) {
+  .geste {
+    min-height: 100svh;
+    padding-top: var(--section-y);
+  }
+  .geste__media {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    z-index: -1;
+    width: min(62vw, 64rem);
+    height: min(74svh, 46rem);
+    aspect-ratio: auto;
+    margin: 0;
+    translate: 0 -50%;
+    border-radius: var(--rayon-photo) 0 0 var(--rayon-photo);
+  }
+  .geste__media::after {
+    background: linear-gradient(to right, rgb(40 23 15 / 0.62) 0%, rgb(40 23 15 / 0) 46%);
+  }
+  .geste__contenu {
+    gap: 2rem;
+  }
+  .geste .phrase {
+    margin-top: 0;
+    max-width: 9.5em;
+  }
+  .geste .chapo {
+    max-width: min(22em, 30vw);
+  }
+}
+
+/* ── 06 · L'univers Peachy (crème éditoriale) ────────────────────────────── */
+
+.univers__grille {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+
+.univers__texte {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.univers__niches {
+  grid-column: 1 / -1;
+  aspect-ratio: 3 / 4;
+}
+
+.univers__jarre,
+.univers__huile,
+.univers__buste {
+  aspect-ratio: 3 / 4;
+}
+
+.univers__etageres {
+  grid-column: 1 / -1;
+  aspect-ratio: 8 / 5;
+}
+
+.univers__buste {
+  grid-column: 1 / -1;
+  width: 62%;
+  margin-left: auto;
+}
+
+/* Tablette : le grand visuel sur deux colonnes, deux détails empilés à sa droite. */
+@media (min-width: 36rem) and (max-width: 61.99rem) {
+  .univers__grille {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .univers__niches {
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 2;
+  }
+  .univers__jarre {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .univers__huile {
+    grid-column: 3;
+    grid-row: 3;
+  }
+  .univers__etageres {
+    grid-column: 1 / span 2;
+    grid-row: 4;
+    align-self: end;
+  }
+  .univers__buste {
+    grid-column: 3;
+    grid-row: 4;
+    width: 100%;
+  }
+}
+
+@media (min-width: 62rem) {
+  .univers__grille {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(1rem, 1.8vw, 1.75rem);
+    align-items: start;
+  }
+  .univers__niches {
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 2;
+  }
+  .univers__texte {
+    grid-column: 7 / span 6;
+    grid-row: 1;
+    margin-bottom: var(--e-4);
+    padding-top: 0.5rem;
+  }
+  .univers__jarre {
+    grid-column: 7 / span 3;
+    grid-row: 2;
+    align-self: end;
+  }
+  .univers__huile {
+    grid-column: 10 / span 3;
+    grid-row: 2;
+    align-self: end;
+  }
+  .univers__etageres {
+    grid-column: 2 / span 6;
+    grid-row: 3;
+    margin-top: clamp(1rem, 4vw, 4rem);
+  }
+  .univers__buste {
+    grid-column: 9 / span 3;
+    grid-row: 3;
+    width: 100%;
+    margin-top: clamp(2rem, 7vw, 7rem);
+  }
+}
+
+/* ── 07 · L'expérience client (beige minéral) ────────────────────────────── */
+
+.experience {
+  min-height: 84svh;
+}
+
+.experience__interieur {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.experience__guillemet {
+  width: 2.75rem;
+  height: auto;
+  margin-bottom: 1.75rem;
+  color: var(--terracotta);
+}
+
+.experience .phrase {
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+  max-width: 17em;
+}
+
+.experience .filet {
+  margin-block: 2.25rem 1.5rem;
+  color: var(--cacao);
+}
+
+.experience__attente {
+  max-width: 30em;
+  color: var(--cacao);
+}
+
+.temoignages {
+  display: grid;
+  gap: var(--e-4);
+  width: 100%;
+  margin-top: var(--e-5);
+}
+
+.temoignage blockquote {
+  font-family: var(--serif);
+  font-size: var(--t-sous-titre);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.temoignage figcaption {
+  margin-top: 1rem;
+  font-size: var(--t-petit);
+  letter-spacing: 0.04em;
+  color: var(--cacao);
+}
+
+@media (min-width: 62rem) {
+  .temoignages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── 08 · Réserver un moment pour soi (chocolat profond) ─────────────────── */
+
+.reserver__symbole {
+  position: absolute;
+  right: -6%;
+  bottom: -8%;
+  z-index: -1;
+  width: min(46rem, 90vw);
+  aspect-ratio: 204 / 238;
+  color: #170c07;
+  background: currentColor;
+  -webkit-mask: url("../img/logo/peachy-symbole.svg") center / contain no-repeat;
+  mask: url("../img/logo/peachy-symbole.svg") center / contain no-repeat;
+  /* débossage : le symbole est creusé dans la matière */
+  filter: drop-shadow(0 1px 0 rgb(245 235 222 / 0.07)) drop-shadow(0 -1px 0 rgb(0 0 0 / 0.5));
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.reserver__interieur {
+  display: grid;
+  gap: var(--e-4);
+  justify-items: center;
+  text-align: center;
+}
+
+.reserver__photo {
+  width: min(62%, 15rem);
+  aspect-ratio: 3 / 4;
+}
+
+.reserver__texte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reserver .chapo {
+  margin-top: 1.25rem;
+  color: var(--lumiere);
+}
+
+.reserver .btn {
+  margin-top: 2.25rem;
+  min-height: 3.5rem;
+  padding-inline: 2.25rem;
+}
+
+.reserver__note {
+  margin-top: 1.25rem;
+  max-width: 26em;
+  font-size: var(--t-petit);
+  color: var(--lumiere-douce);
+}
+
+@media (min-width: 62rem) {
+  .reserver__interieur {
+    grid-template-columns: auto minmax(0, 34rem);
+    justify-content: center;
+    align-items: center;
+    justify-items: start;
+    gap: clamp(3rem, 7vw, 7rem);
+    text-align: left;
+  }
+  .reserver__photo {
+    width: min(21rem, 46svh);
+  }
+  .reserver__texte {
+    align-items: flex-start;
+  }
+}
+
+/* ── 09 · Pied de page ───────────────────────────────────────────────────── */
+
+.pied {
+  position: relative;
+  padding-block: var(--e-5) calc(var(--e-3) + env(safe-area-inset-bottom, 0px));
+  color: var(--lumiere);
+}
+
+.pied::before {
+  content: "";
+  position: absolute;
+  inset: 0 var(--gouttiere) auto;
+  height: 1px;
+  background: var(--filet-clair);
+}
+
+.pied__grille {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.pied__logo {
+  width: 11.5rem;
+  height: auto;
+}
+
+.pied__titre {
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: var(--approche-label);
+  text-transform: uppercase;
+  color: var(--lumiere-douce);
+  margin-bottom: 0.75rem;
+}
+
+.pied__liste {
+  display: grid;
+}
+
+.pied__liste a,
+.pied__liste span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: 0.9375rem;
+}
+
+.pied__liste a {
+  background: linear-gradient(currentColor, currentColor) left calc(100% - 0.7rem) / 0% 1px no-repeat;
+  transition: background-size var(--d-survol) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pied__liste a:hover {
+    background-size: 100% 1px;
+  }
+}
+
+.pied__liste a:active {
+  opacity: 0.6;
+}
+
+.pied__bas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  align-items: center;
+  margin-top: var(--e-4);
+  padding-top: var(--e-2);
+  border-top: 1px solid var(--filet-clair);
+  font-size: 0.8125rem;
+  color: var(--lumiere-douce);
+}
+
+.pied__bas a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--d-survol) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pied__bas a:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+.pied__bas p {
+  margin-right: auto;
+}
+
+@media (min-width: 62rem) {
+  .pied__grille {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 3fr);
+    align-items: start;
+  }
+}
