@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Peachy · logos, série 1</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="../banc.css">
+  </head>
+
+  <body>
+    <a class="series" href="../">Toutes les séries</a>
+    <main id="stage"></main>
+    <nav class="proto-picker" aria-label="Prototype variants"></nav>
+
+    <script type="module">
+      import { monter } from "../banc.js";
+      import { pieces } from "./pieces.js";
+
+      // Série 1 : trois signes nés du P, autour du fruit. Idée de la pêche écartée depuis (voir série 2).
+      monter({
+        pieces,
+        note: "Le nom PEACHY et le sous-titre sont les mêmes sur les trois pistes : seul le signe change. Touches 1 à 3 ou flèches pour passer de l’une à l’autre.",
+        pistes: [
+          {
+            cle: "onde",
+            nom: "Onde",
+            idee: "La panse du P se répète trois fois, emboîtée, comme la barre du T de TIERRA se répète sur son fût.",
+            lecture: "Une demi-pêche et son noyau, le passage de la main, les niches en arche du lieu.",
+          },
+          {
+            cle: "peche",
+            nom: "Pêche",
+            idee: "Le P devient le fruit : sa panse s’arrondit, une feuille se pose au-dessus.",
+            lecture: "Le lien le plus direct avec le nom, et avec la feuille du premier logo de Peachy.",
+          },
+          {
+            cle: "plein",
+            nom: "Plein",
+            idee: "La panse du P devient une masse, comme les lobes pleins du signe de TIERRA.",
+            lecture: "Une demi-pêche fendue par son sillon. Le signe le plus lisible en très petit.",
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>

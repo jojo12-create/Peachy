@@ -1,0 +1,243 @@
+/* Banc d'essai : une piste de logo à la fois, en grand, sur la matière de Peachy.
+   Rien ici n'est repris par la démo tant qu'une piste n'a pas été choisie. */
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/inter-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../assets/fonts/playfair-display-400-italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}
+:root {
+  --cuir: #7a4c33;
+  --chocolat: #28170f;
+  --ivoire: #f5ebde;
+  --creme: #ead9c6;
+  --encre-claire: #f3dfa9;   /* le crème beurre de la référence, posé à plat */
+  --texte: #5e3a29;
+  color-scheme: only light;
+}
+* { box-sizing: border-box; }
+html { background: var(--cuir); }
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--chocolat);
+  background: var(--ivoire);
+  -webkit-font-smoothing: antialiased;
+}
+p, h1, h2, figure, dl, dd { margin: 0; }
+
+/* Une pièce du logo : un masque, rempli de la couleur d'encre courante. */
+.encre {
+  display: block;
+  aspect-ratio: var(--l) / var(--h);
+  background: currentColor;
+  -webkit-mask: var(--f) center / contain no-repeat;
+  mask: var(--f) center / contain no-repeat;
+}
+
+/* ── La planche : le logo seul, au centre de la matière, comme sur la référence ── */
+.planche {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 4rem 1.5rem 7rem;
+  color: var(--encre-claire);
+  background-color: var(--cuir);
+  background-image:
+    radial-gradient(75% 60% at 50% 46%, rgb(255 214 172 / 0.11), rgb(255 214 172 / 0) 72%),
+    radial-gradient(140% 125% at 50% 46%, rgb(29 16 10 / 0) 44%, rgb(29 16 10 / 0.38) 100%),
+    url("../assets/img/textures/cuir.webp");
+  background-size: auto, auto, 540px;
+}
+.logo {
+  --u: min(0.72vw, 0.74svh, 6.4px);   /* une unité du dessin : le logo tient dans l'écran */
+  display: grid;
+  justify-items: center;
+}
+.logo .symbole { height: calc(var(--h) * var(--u) * 0.56); }
+.logo .nom { height: calc(84 * var(--u) * 0.3); margin-top: calc(var(--u) * 5); }
+.logo .sous { height: calc(84 * var(--u) * 0.06); margin-top: calc(var(--u) * 4.4); }
+
+/* ── Les usages : la même piste, dans les situations réelles du site ── */
+.usages {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4.5rem);
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) max(1.25rem, env(safe-area-inset-left, 0px)) 9rem;
+}
+.usages h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+  line-height: 1.1;
+}
+.usages > header p {
+  max-width: 38em;
+  margin-top: 1rem;
+  color: var(--texte);
+  line-height: 1.6;
+}
+.cas {
+  display: grid;
+  gap: 1rem;
+}
+.cas h2 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--texte);
+}
+.cas__zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-radius: 6px;
+  min-width: 0;
+}
+.zone--cuir {
+  color: var(--encre-claire);
+  background: var(--cuir) url("../assets/img/textures/cuir.webp") 0 0 / 540px;
+}
+.zone--creme {
+  color: var(--chocolat);
+  background: var(--creme) url("../assets/img/textures/enduit.webp") 0 0 / 512px;
+}
+.zone--nuit {
+  color: var(--ivoire);
+  background: #1d100a url("../assets/img/textures/chocolat.webp") 0 0 / 256px;
+}
+/* De la lettre au signe : le mécanisme, mis côte à côte. */
+.filiation { align-items: flex-end; }
+.filiation .encre { height: clamp(6rem, 18vw, 11rem); }
+.filiation .initiale { height: clamp(4.4rem, 13.3vw, 8.1rem); }
+.filiation .fleche {
+  align-self: center;
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+/* Le logo couché, pour la barre de navigation. */
+.couche {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--t) * 0.5);
+}
+.couche .symbole { height: calc(var(--t) * 1.9); }
+.couche__mots { display: grid; gap: calc(var(--t) * 0.34); }
+.couche .nom { height: var(--t); }
+.couche .sous { width: 100%; height: auto; }
+.pastilles { display: flex; align-items: flex-end; gap: 1.25rem; }
+.pastille {
+  display: grid;
+  place-items: center;
+  width: var(--c);
+  height: var(--c);
+  border-radius: 22%;
+  color: var(--encre-claire);
+  background: var(--cuir);
+}
+.pastille .encre { height: 68%; }
+.note {
+  max-width: 44em;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--texte);
+}
+
+/* ── Le sélecteur : repris tel quel du skill « prototype » (PICKER.md) ── */
+.proto-picker {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.82);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 8px 24px rgba(0, 0, 0, 0.24),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.proto-picker-highlight {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.proto-picker[data-ready] .proto-picker-highlight {
+  transition:
+    transform 250ms cubic-bezier(0.23, 1, 0.32, 1),
+    width 250ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proto-picker[data-ready] .proto-picker-highlight { transition: none; }
+}
+.proto-picker-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 150ms ease-out,
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .proto-picker-item:hover { color: rgba(255, 255, 255, 0.85); }
+}
+.proto-picker-item:active { transform: scale(0.97); }
+.proto-picker-item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+}
+.proto-picker-item[data-active] { color: #fff; }
+
+/* Retour aux autres séries : discret, hors du sélecteur. */
+.series {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  left: max(1rem, env(safe-area-inset-left, 0px));
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: 0.25rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--encre-claire);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  text-decoration-thickness: 1px;
+}

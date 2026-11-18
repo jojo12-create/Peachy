@@ -1,0 +1,300 @@
+/* ==========================================================================
+   Peachy — mouvement.
+
+   Principes :
+   - le contenu est visible par défaut ; les états de départ ne s'appliquent
+     que lorsque le script a posé la classe .js sur <html> ;
+   - seules transform, opacity et clip-path sont animées ;
+   - une entrée par conteneur, des décalages courts et dégressifs ;
+   - prefers-reduced-motion : plus de déplacement, un simple fondu.
+   ========================================================================== */
+
+/* ── Couverture : le nom se presse dans le cuir, une fois ─────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .couverture__gravure {
+    animation: gravure 2200ms var(--ease-out) 250ms both;
+  }
+  .js .couverture__suite {
+    animation: fondu 900ms ease 1900ms both;
+  }
+  /* Invitation à descendre : trois passages, puis le trait se repose. */
+  .js .couverture__suite span::after {
+    animation: suite 2400ms var(--ease-in-out) 2800ms 3;
+  }
+}
+
+@keyframes gravure {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+}
+
+@keyframes suite {
+  0% {
+    transform: translateY(-100%);
+  }
+  55%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ── D'un chapitre à l'autre : le suivant recouvre le précédent ───────────── */
+/* Chaque chapitre arrive comme une feuille au sommet arrondi, qui glisse par-dessus
+   le précédent. Celui qui s'en va ralentit et s'assombrit : il recule, au lieu de
+   simplement sortir de l'écran. Aucun défilement imposé : tout suit le doigt.
+
+   --recul (0 → 1) : avancée de la sortie d'un chapitre. Piloté par la position de
+   défilement en CSS (animation-timeline) ; par main.js là où ce n'est pas disponible. */
+
+.scene {
+  position: relative;
+}
+
+.scene:not(.couverture) {
+  margin-top: calc(var(--voute) * -1);
+  border-radius: var(--voute) var(--voute) 0 0;
+  box-shadow: 0 -1.75rem 3.5rem -1.5rem rgb(20 10 5 / 0.5);
+}
+
+/* Le voile qui assombrit le chapitre recouvert. */
+.scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  background: var(--chocolat-nuit);
+  opacity: calc(var(--recul, 0) * 0.6);
+  pointer-events: none;
+}
+
+.pied.scene::after {
+  content: none;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scene:not(.pied) {
+      view-timeline: --scene block;
+      animation: recul linear both;
+      animation-timeline: --scene;
+      animation-range: exit 0% exit 100%;
+    }
+    .scene:not(.pied)::after {
+      animation: voile linear both;
+      animation-timeline: --scene;
+      animation-range: exit 0% exit 100%;
+    }
+
+    /* Dans une bannière, la photographie glisse un peu moins vite que son cadre. */
+    .prestation__photo img {
+      animation: parallaxe linear both;
+      animation-timeline: view(block);
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@keyframes recul {
+  to {
+    transform: translate3d(0, 28svh, 0);
+  }
+}
+
+@keyframes voile {
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes parallaxe {
+  from {
+    transform: translate3d(0, -4.5%, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(0, 4.5%, 0) scale(1.1);
+  }
+}
+
+@keyframes trait {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(0.875rem);
+  }
+}
+
+@keyframes monte-leger {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes fondu {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ── Révélations au défilement ───────────────────────────────────────────── */
+/* data-reveal="ecrit"  : lettrage qui s'écrit, de gauche à droite
+   data-reveal="monte"  : texte, fondu + légère montée
+   data-reveal="fondu"  : éléments décoratifs, fondu seul
+   data-reveal="trait"  : filet qui se dessine
+   data-reveal="photo"  : photographie dévoilée par un masque, de bas en haut
+   --i                  : rang dans le groupe (décalage dégressif)            */
+
+.js [data-reveal] {
+  --delai: calc(var(--attente, 0ms) + var(--pas) * var(--i, 0) * (1 - var(--i, 0) * 0.07));
+}
+
+/* Les transitions de révélation ne vivent que le temps de l'entrée : le script pose
+   data-pose à la fin, et l'élément retrouve ses transitions propres (survol, pression). */
+.js [data-reveal]:not([data-pose]) {
+  transition:
+    opacity var(--d-revelation) var(--ease-out) var(--delai),
+    transform var(--d-revelation) var(--ease-out) var(--delai);
+}
+
+/* Le nom d'une prestation s'écrit : le tracé se découvre dans le sens de la plume. */
+.js [data-reveal="ecrit"]:not([data-pose]) {
+  clip-path: inset(-10% 0 -10% 0);
+  transition: clip-path 1500ms var(--ease-in-out) calc(var(--delai) * 2.4);
+}
+
+.js [data-reveal="ecrit"]:not([data-vu]) {
+  clip-path: inset(-10% 100% -10% 0);
+}
+
+.js [data-reveal="monte"]:not([data-vu]) {
+  opacity: 0;
+  transform: translateY(1.125rem);
+}
+
+.js [data-reveal="fondu"]:not([data-vu]) {
+  opacity: 0;
+}
+
+.js [data-reveal="trait"]:not([data-vu]) {
+  transform: scaleX(0);
+}
+
+/* Le masque est porté par <picture> : l'élément observé garde sa boîte entière. */
+.js [data-reveal="photo"]:not([data-pose]) {
+  transition:
+    background-color var(--d-photo) ease var(--delai),
+    box-shadow var(--d-photo) ease var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-pose]) picture {
+  clip-path: inset(0);
+  transition: clip-path var(--d-photo) var(--ease-out) var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-pose]) img {
+  transition: transform var(--d-photo) var(--ease-out) var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-vu]) {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.js [data-reveal="photo"]:not([data-vu]) picture {
+  clip-path: inset(100% 0 0 0);
+}
+
+.js [data-reveal="photo"]:not([data-vu]) img {
+  transform: scale(1.1);
+}
+
+/* ── Mouvements liés au défilement (CSS seul, hors fil principal) ────────── */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Le geste : le cadrage se resserre doucement pendant la traversée. */
+    .geste__media img {
+      animation: cadrage linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% exit 100%;
+    }
+
+    /* Le détail de la philosophie glisse un peu plus vite que le portrait. */
+    .philosophie__detail {
+      animation: glisse linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes cadrage {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes glisse {
+  from {
+    transform: translateY(1.75rem);
+  }
+  to {
+    transform: translateY(-1.75rem);
+  }
+}
+
+/* ── Mouvement réduit : on garde les fondus, on retire les déplacements ──── */
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal]:not([data-pose]),
+  .js [data-reveal="photo"]:not([data-pose]) {
+    --delai: 0ms;
+    transition: opacity 300ms ease;
+  }
+  .js [data-reveal="monte"]:not([data-vu]),
+  .js [data-reveal="trait"]:not([data-vu]) {
+    transform: none;
+  }
+  .js [data-reveal="trait"]:not([data-vu]),
+  .js [data-reveal="photo"]:not([data-vu]),
+  .js [data-reveal="ecrit"]:not([data-vu]) {
+    opacity: 0;
+  }
+  .js [data-reveal="ecrit"]:not([data-pose]),
+  .js [data-reveal="ecrit"]:not([data-vu]) {
+    clip-path: none;
+  }
+  .scene::after {
+    content: none;
+  }
+  .js [data-reveal="photo"]:not([data-pose]) picture,
+  .js [data-reveal="photo"]:not([data-vu]) picture {
+    clip-path: none;
+    transition: none;
+  }
+  .js [data-reveal="photo"]:not([data-pose]) img,
+  .js [data-reveal="photo"]:not([data-vu]) img {
+    transform: none;
+    transition: none;
+  }
+  .entete,
+  .btn,
+  .btn__fleche {
+    transition-duration: 1ms;
+  }
+  .btn:hover {
+    transform: none;
+  }
+}

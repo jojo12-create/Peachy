@@ -33,6 +33,8 @@ Puis ouvrir http://localhost:4173. Le dossier se dépose tel quel chez n'importe
 | `photos/originaux/` | Photos d'origine, jamais modifiées |
 | `tools/` | Chaîne de retouche, générateurs de matières, tracé du lettrage |
 | `tools/sources/` | Maquettes fournies par Peachy (papier, cuir), d'où viennent les deux matières terracotta |
+| `v2/` | Copie du site, pour essayer une nouvelle identité sans toucher à la démo |
+| `v2/labo-logo/` | Banc d'essai des logos : séries de pistes derrière un sélecteur (`dessin.mjs` de chaque série les redessine) |
 | `DESIGN.md` | Règles de design du projet |
 | `PRODUCT.md` | Contexte produit |
 | `CONTENU-A-COMPLETER.md` | Ce qui reste à fournir ou à valider |

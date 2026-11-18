@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Peachy · logos, série 2</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="../banc.css">
+  </head>
+
+  <body>
+    <a class="series" href="../">Toutes les séries</a>
+    <main id="stage"></main>
+    <nav class="proto-picker" aria-label="Prototype variants"></nav>
+
+    <script type="module">
+      import { monter } from "../banc.js";
+      import { pieces } from "./pieces.js";
+
+      // Série 2 : plus de pêche. Lettrage stylisé, même P dans le signe, rappel du drainage lymphatique.
+      monter({
+        pieces,
+        note: "Le lettrage est le même sur les trois pistes : chaque trait part fin et finit en goutte. Seul le signe change. Touches 1 à 3 ou flèches pour passer de l’une à l’autre.",
+        pistes: [
+          {
+            cle: "goutte",
+            nom: "Goutte",
+            idee: "La panse du P ne se referme pas : son trait s’allège, et une goutte s’en détache.",
+            lecture: "L’image la plus directe du drainage : ce qui était retenu s’écoule.",
+          },
+          {
+            cle: "onde",
+            nom: "Onde",
+            idee: "La panse du P se répète, emboîtée, comme la barre du T de TIERRA se répète sur son fût.",
+            lecture: "Le passage répété de la main, toujours dans le même sens ; une onde qui se propage.",
+          },
+          {
+            cle: "perles",
+            nom: "Perles",
+            idee: "La panse du P est faite de gouttes, de plus en plus pleines à mesure qu’elles rejoignent le fût.",
+            lecture: "La lymphe qui chemine et se rassemble vers son canal. Le signe le plus singulier.",
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>

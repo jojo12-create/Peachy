@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Peachy · banc d’essai des logos</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="banc.css">
+    <style>
+      .sommaire {
+        min-height: 100svh;
+        display: grid;
+        align-content: center;
+        gap: 2.5rem;
+        max-width: 44rem;
+        margin: 0 auto;
+        padding: 4rem max(1.25rem, env(safe-area-inset-left, 0px));
+      }
+      .sommaire h1 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: clamp(2rem, 1.3rem + 3vw, 3.25rem);
+        line-height: 1.08;
+      }
+      .sommaire p { color: var(--texte); line-height: 1.6; max-width: 36em; }
+      .sommaire ul { list-style: none; margin: 0; padding: 0; display: grid; }
+      .sommaire li { border-top: 1px solid rgb(40 23 15 / 0.22); }
+      .sommaire a {
+        display: grid;
+        gap: 0.25rem;
+        padding: 1.25rem 0;
+        color: inherit;
+        text-decoration: none;
+      }
+      .sommaire a:active { opacity: 0.6; }
+      .sommaire a:focus-visible { outline: 2px solid #975d3e; outline-offset: 4px; }
+      .sommaire strong { font-weight: 500; font-size: 1.125rem; }
+      .sommaire span { color: var(--texte); font-size: 0.9375rem; }
+    </style>
+  </head>
+
+  <body>
+    <main class="sommaire">
+      <h1>Banc d’essai des logos</h1>
+      <p>Les pistes de logo se testent ici, dans la copie du site. Rien n’est repris par la démo tant qu’une piste n’a pas été choisie.</p>
+      <ul>
+        <li><a href="serie-2/"><strong>Série 2 · le drainage</strong><span>Lettrage stylisé, même P dans le signe : Goutte, Onde, Perles.</span></a></li>
+        <li><a href="serie-1/"><strong>Série 1 · le fruit</strong><span>Idée de la pêche, écartée : Onde, Pêche, Plein.</span></a></li>
+      </ul>
+    </main>
+  </body>
+</html>
