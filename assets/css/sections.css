@@ -3,280 +3,180 @@
    Mobile d'abord ; les compositions éditoriales arrivent à partir de 62rem.
    ========================================================================== */
 
-/* ── 01 · Première page : le logo doré sur le papier ─────────────────────── */
-/* Le papier est une tuile sans couture ; deux halos très légers lui donnent une
-   lumière qui ne se répète pas. La page laisse voir, en bas de l'écran, le haut
-   du chapitre des rituels (--apercu). */
+/* ── 01 · Couverture : le nom gravé dans le cuir, et rien d'autre ────────── */
+/* Le nom n'a pas de couleur : c'est le cuir lui-même, pressé. Ni titre, ni bouton,
+   ni barre de navigation : seul un trait discret invite à descendre. */
 
-.hero {
+/* La couverture dépasse l'écran de la hauteur d'une voûte : le chapitre suivant, qui
+   remonte sur elle, n'apparaît qu'au premier geste de défilement. */
+.couverture {
   position: relative;
-  min-height: calc(100svh - var(--apercu));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-block: calc(var(--entete) + env(safe-area-inset-top, 0px) + 1.25rem) clamp(2.25rem, 6svh, 4rem);
-  color: var(--lumiere);
-  background-color: var(--papier);
-  background-image:
-    radial-gradient(110% 80% at 28% 12%, rgb(255 214 172 / 0.09), rgb(255 214 172 / 0) 62%),
-    radial-gradient(130% 125% at 50% 44%, rgb(29 16 10 / 0) 50%, rgb(29 16 10 / 0.28) 100%),
-    var(--matiere-papier-terracotta);
-  background-size: auto, auto, 560px;
+  min-height: calc(100svh + var(--voute));
+  display: grid;
+  place-items: center;
+  padding: 4.5rem var(--gouttiere) calc(4.5rem + var(--voute));
   isolation: isolate;
   overflow: clip;
 }
 
-.hero__contenu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* La dorure à chaud laisse une très légère empreinte : une ombre de contact sous
-   le métal, un liseré de lumière au-dessus. */
-.hero__logo {
-  width: min(70vw, 23.5rem, 43svh);
-  filter: drop-shadow(0 1px 0.5px rgb(44 20 9 / 0.5)) drop-shadow(0 -0.5px 0 rgb(255 232 200 / 0.14));
+.couverture__gravure {
+  width: min(84vw, 46rem, 150svh);
+  height: auto;
   -webkit-user-select: none;
   user-select: none;
+  pointer-events: none;
 }
 
-/* Le logo est un masque ; ce qu'on voit à travers est la dorure : un métal crème
-   mat, qui garde le grain du papier sur lequel il a été pressé. */
-.dorure {
+.couverture__suite {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--voute) + 1rem + env(safe-area-inset-bottom, 0px));
+  width: 2.75rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  translate: -50% 0;
+}
+
+/* Un simple trait, gravé lui aussi : ombre à gauche, lumière à droite. */
+.couverture__suite span {
   position: relative;
-  display: block;
-  aspect-ratio: 459 / 378.5;
+  width: 1px;
+  height: 2.75rem;
+  background: rgb(44 20 9 / 0.55);
+  box-shadow: 1px 0 0 rgb(255 214 172 / 0.16);
   overflow: hidden;
-  background:
-    var(--matiere-papier) 0 0 / 200px,
-    linear-gradient(
-      112deg,
-      var(--dorure-claire) 0%,
-      var(--dorure) 30%,
-      var(--dorure-ombre) 52%,
-      var(--dorure) 74%,
-      var(--dorure-claire) 100%
-    );
-  -webkit-mask: url("../img/logo/peachy-logo-mono.svg") center / contain no-repeat;
-  mask: url("../img/logo/peachy-logo-mono.svg") center / contain no-repeat;
 }
 
-/* Le reflet : une bande de lumière qui traverse le métal. Au repos, elle attend
-   hors du logo (--reflet-x vaut -85). */
-.dorure__reflet {
-  position: absolute;
-  inset: 0 -30%;
-  background: linear-gradient(100deg, rgb(255 250 238 / 0) 38%, rgb(255 250 238 / 0.92) 50%, rgb(255 250 238 / 0) 62%);
-  transform: translateX(calc(var(--reflet-x, -85) * 1%));
-  opacity: var(--reflet-o, 0);
-  transition: opacity 700ms ease;
-  pointer-events: none;
-}
-
-.hero .filet {
-  width: 3rem;
-  margin: clamp(1.5rem, 4svh, 2.5rem) auto 1.125rem;
-  transform-origin: center;
-  opacity: 0.5;
-}
-
-.hero__devise {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(1.375rem, 1.1rem + 1.1vw, 1.875rem);
-  line-height: 1.2;
-  letter-spacing: -0.005em;
-  text-wrap: balance;
-}
-
-.hero__actions {
-  margin-top: clamp(1.5rem, 4svh, 2.25rem);
-}
-
-.hero :focus-visible {
-  outline-color: var(--creme);
-}
-
-/* ── 02 · Les rituels (crème éditoriale) ─────────────────────────────────── */
-/* Un bandeau, comme sur la maquette : le titre et son filet à gauche, trois photos
-   sous voûte à droite. Son sommet dépasse sous la première page. */
-
-.rituels {
-  position: relative;
-  scroll-margin-top: var(--entete);   /* le titre ne passe pas sous la barre */
-  padding-block: clamp(1.75rem, 4.5svh, 2.75rem) var(--section-y);
-  isolation: isolate;
-  overflow: clip;
-}
-
-/* La feuille de papier de la première page porte son ombre sur le bandeau. */
-.rituels::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1.5rem;
-  background: linear-gradient(to bottom, rgb(40 23 15 / 0.2), rgb(40 23 15 / 0.05) 45%, rgb(40 23 15 / 0));
-  pointer-events: none;
-}
-
-.rituels__grille {
-  display: grid;
-  gap: 1.75rem;
-}
-
-.rituels__entete {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.rituels__entete .titre {
-  font-size: clamp(2.25rem, 1.55rem + 2.4vw, 3.5rem);
-}
-
-.rituels__entete .filet {
-  margin-block: 1.25rem 1.5rem;
-  color: var(--terracotta);
-  opacity: 0.85;
-}
-
-.rituels__entete .texte {
-  max-width: 26em;
-}
-
-.rituels__liste {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min(78%, 20rem);
-  gap: 1rem;
-  margin-inline: calc(var(--gouttiere) * -1);
-  padding: 0.25rem var(--gouttiere) 2rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gouttiere);
-  scrollbar-width: none;
-}
-
-.rituels__liste::-webkit-scrollbar {
-  display: none;
-}
-
-.rituels__liste > li {
-  scroll-snap-align: start;
-  display: flex;
-}
-
-.rituel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.rituel__photo {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  margin-bottom: 1.375rem;
-  border-radius: var(--rayon-voute);
-}
-
-.rituel__photo img {
-  transition: transform 700ms var(--ease-out);
-}
-
-.rituel p {
-  margin-top: 0.5rem;
-  max-width: 22em;
-  font-size: 0.9375rem;
-  color: var(--encre-douce);
-}
-
-.rituel .lien {
-  margin-top: auto;
-  padding-top: 0.625rem;
-}
-
-/* Tout le rituel est cliquable, le lien reste le seul élément focalisable. */
-.rituel .lien::before {
+.couverture__suite span::after {
   content: "";
   position: absolute;
   inset: 0;
+  background: rgb(255 214 172 / 0.6);
+  transform: translateY(-100%);
 }
 
-.rituel:active .rituel__photo img {
-  transform: scale(1.015);
+.couverture__suite:focus-visible {
+  outline-color: var(--creme);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .rituel:hover .rituel__photo img {
-    transform: scale(1.035);
-  }
-  .rituel:hover .lien__texte {
-    background-size: 0% 1px;
-    background-position: right 100%;
-  }
-  .rituel:hover .btn__fleche {
-    transform: translateX(4px);
-  }
+/* ── 02 à 04 · Les prestations : une bannière chacune ─────────────────────── */
+/* Une bannière occupe l'écran : la photographie d'un côté, sur toute la hauteur ; de
+   l'autre, le nom de la prestation dans le lettrage de la maison, une phrase, et la
+   réservation. La photo change de côté d'une bannière à l'autre. */
+
+/* Comme la couverture, une bannière dépasse l'écran de la hauteur d'une voûte : la
+   suivante n'apparaît qu'en défilant. */
+.prestation {
+  position: relative;
+  display: grid;
+  min-height: calc(100svh + var(--voute));
+  isolation: isolate;
+  overflow: clip;
 }
 
-.rituels__points {
+.prestation__photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 72svh;
+  border-radius: 0;
+}
+
+#drainage .prestation__photo img {
+  object-position: 42% 50%;
+}
+
+#luminotherapie .prestation__photo img {
+  object-position: 50% 38%;
+}
+
+.prestation__contenu {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--e-4) var(--gouttiere) calc(var(--section-y) + var(--voute));
 }
 
-.rituels__points span {
-  width: 1.25rem;
-  height: 1px;
-  background: var(--encre);
-  opacity: 0.25;
-  transition: opacity var(--d-survol) ease;
+.prestation__titre {
+  --cap: clamp(1.5rem, 7.6vw, 2.75rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);   /* une ligne trop longue rétrécit, elle ne déborde pas */
+  width: 100%;
+  margin-block: -0.5rem 0.75rem;
 }
 
-.rituels__points span[data-actif] {
-  opacity: 1;
+.prestation .chapo {
+  max-width: 30em;
+}
+
+.prestation.ton-sombre .chapo {
+  color: var(--lumiere);
+}
+
+.prestation .btn {
+  margin-top: 2.25rem;
+}
+
+.reperes {
+  display: grid;
+  gap: 1.5rem 2.5rem;
+  margin-top: 2.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--filet-clair);
+  width: 100%;
+}
+
+.reperes dt {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1875rem;
+  line-height: 1.3;
+  color: var(--lumiere);
+}
+
+.reperes dd {
+  margin-top: 0.375rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--lumiere-douce);
+}
+
+@media (min-width: 36rem) {
+  .reperes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 62rem) {
-  .rituels {
-    padding-bottom: clamp(5rem, 11vh, 7.5rem);
+  .prestation {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
   }
-  .rituels__grille {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 3.2fr);
-    column-gap: clamp(2rem, 4.5vw, 5rem);
+  .prestation--inverse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
   }
-  .rituels__entete .titre {
-    font-size: clamp(2.25rem, 0.6rem + 2.9vw, 3.5rem);
-    white-space: nowrap;
+  .prestation__photo {
+    aspect-ratio: auto;
+    max-height: none;
+    height: 100%;
+    min-height: calc(100svh + var(--voute));
   }
-  /* Le texte d'introduction s'aligne sur le bas des rituels : au premier écran,
-     seuls le titre et son filet se voient, comme sur la maquette. */
-  .rituels__entete .filet {
-    margin-block: 1.75rem 2rem;
+  .prestation--inverse .prestation__photo {
+    order: 2;
   }
-  .rituels__entete .texte {
-    margin-top: auto;
-    padding-bottom: 0.75rem;
+  .prestation__contenu {
+    justify-content: center;
+    padding: var(--section-y) clamp(2.5rem, 6vw, 6.5rem) calc(var(--section-y) + var(--voute));
   }
-  .rituels__liste {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(1.25rem, 2.2vw, 2rem);
-    margin-inline: 0;
-    padding: 0;
-    overflow: visible;
+  .prestation__contenu > :not(.prestation__titre) {
+    max-width: 36rem;
   }
-  .rituels__points {
-    display: none;
+  .prestation__titre {
+    --cap: clamp(1.875rem, 3.3vw, 3.5rem);
+    margin-bottom: 1.25rem;
   }
 }
 
-/* ── 04 · La philosophie Peachy (crème éditoriale) ───────────────────────── */
+/* ── 05 · La philosophie Peachy (crème éditoriale) ───────────────────────── */
 
 .philosophie__grille {
   display: grid;
@@ -343,84 +243,7 @@
   }
 }
 
-/* ── 03 · Le drainage lymphatique (chocolat) ─────────────────────────────── */
-
-.drainage {
-  padding-block: 0;
-  justify-content: stretch;
-}
-
-.drainage__photo {
-  border-radius: 0;
-  aspect-ratio: 4 / 5;
-}
-
-.drainage__photo img {
-  object-position: 42% 50%;
-}
-
-.drainage__contenu {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: var(--e-5) var(--gouttiere) var(--section-y);
-}
-
-.drainage .chapo {
-  margin-top: 1.5rem;
-  color: var(--lumiere);
-}
-
-.reperes {
-  display: grid;
-  gap: 1.5rem 2.5rem;
-  margin-block: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--filet-clair);
-  width: 100%;
-}
-
-.reperes dt {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.1875rem;
-  line-height: 1.3;
-  color: var(--lumiere);
-}
-
-.reperes dd {
-  margin-top: 0.375rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--lumiere-douce);
-}
-
-@media (min-width: 36rem) {
-  .reperes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 62rem) {
-  .drainage {
-    display: grid;
-    grid-template-columns: minmax(0, min(46vw, 82svh)) minmax(0, 1fr);
-  }
-  .drainage__photo {
-    aspect-ratio: auto;
-    height: 100%;
-    min-height: 100svh;
-  }
-  .drainage__contenu {
-    justify-content: center;
-    padding: var(--section-y) clamp(2.5rem, 6vw, 7rem);
-  }
-  .drainage__contenu > * {
-    max-width: 36rem;
-  }
-}
-
-/* ── 05 · Le geste & le savoir-faire (chocolat) ──────────────────────────── */
+/* ── 06 · Le geste & le savoir-faire (chocolat) ──────────────────────────── */
 /* La photographie reste à une taille qui respecte sa définition : pleine largeur
    sur mobile, grand tableau à fond perdu à droite sur ordinateur. La phrase vient
    mordre sur l'image. */
@@ -502,7 +325,7 @@
   }
 }
 
-/* ── 06 · L'univers Peachy (crème éditoriale) ────────────────────────────── */
+/* ── 07 · L'univers Peachy (crème éditoriale) ────────────────────────────── */
 
 .univers__grille {
   display: grid;
@@ -610,7 +433,7 @@
   }
 }
 
-/* ── 07 · L'expérience client (beige minéral) ────────────────────────────── */
+/* ── 08 · L'expérience client (beige minéral) ────────────────────────────── */
 
 .experience {
   min-height: 84svh;
@@ -672,24 +495,7 @@
   }
 }
 
-/* ── 08 · Réserver un moment pour soi (chocolat profond) ─────────────────── */
-
-.reserver__symbole {
-  position: absolute;
-  right: -6%;
-  bottom: -8%;
-  z-index: -1;
-  width: min(46rem, 90vw);
-  aspect-ratio: 212.38 / 246.38;
-  color: #170c07;
-  background: currentColor;
-  -webkit-mask: url("../img/logo/peachy-symbole.svg") center / contain no-repeat;
-  mask: url("../img/logo/peachy-symbole.svg") center / contain no-repeat;
-  /* débossage : le symbole est creusé dans la matière */
-  filter: drop-shadow(0 1px 0 rgb(245 235 222 / 0.07)) drop-shadow(0 -1px 0 rgb(0 0 0 / 0.5));
-  opacity: 0.9;
-  pointer-events: none;
-}
+/* ── 09 · Réserver un moment pour soi (chocolat profond) ─────────────────── */
 
 .reserver__interieur {
   display: grid;
@@ -744,44 +550,18 @@
   }
 }
 
-/* ── 09 · Pied de page : la quatrième de couverture ──────────────────────── */
-/* La page s'est ouverte sur le papier doré ; elle se referme sur le cuir, où le nom
-   est gravé à blanc : sans encre, par la seule ombre du creux. */
+/* ── 10 · Pied de page ───────────────────────────────────────────────────── */
+/* La page s'est ouverte sur le cuir ; elle se referme sur lui, sans logo. */
 
 .pied {
   position: relative;
-  padding-bottom: calc(var(--e-3) + env(safe-area-inset-bottom, 0px));
+  padding-block: calc(var(--e-5) + var(--voute)) calc(var(--e-3) + env(safe-area-inset-bottom, 0px));
   color: var(--lumiere);
 }
 
-.pied__couverture {
-  display: grid;
-  place-items: center;
-  padding-block: clamp(5rem, 15svh, 9.5rem) clamp(4.5rem, 13svh, 8.5rem);
-}
-
-.pied__gravure {
-  width: min(100%, 42rem);
-  height: auto;
-  -webkit-user-select: none;
-  user-select: none;
-  pointer-events: none;
-}
-
 .pied__grille {
-  position: relative;
   display: grid;
   gap: var(--e-4);
-  padding-top: var(--e-4);
-}
-
-/* Le filet s'arrête aux marges, comme le reste de la page. */
-.pied__grille::before {
-  content: "";
-  position: absolute;
-  inset: 0 var(--gouttiere) auto;
-  height: 1px;
-  background: var(--filet-clair);
 }
 
 .pied__devise {

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Peachy — les deux couvertures : papier feutré (ouverture) et cuir grainé (fermeture).
+Peachy — la couverture : le cuir grainé, le nom gravé à blanc, et le papier feutré.
 
 Produit trois fichiers :
-  assets/img/textures/papier-terracotta.webp  papier feutré de la première page
-  assets/img/textures/cuir.webp               cuir grainé du pied de page
+  assets/img/textures/cuir.webp               cuir grainé de la première page et du pied de page
+  assets/img/textures/papier-terracotta.webp  papier feutré (bannière du brossage à sec)
   assets/img/logo/peachy-mot-gravure.webp     nom gravé à blanc dans le cuir : uniquement
                                               les ombres et les lumières du creux
 
@@ -17,8 +17,7 @@ nuances que la maquette, et se raccorde sans couture dans les deux sens.
 
 La gravure est calculée avec une lumière venant du haut à gauche : bord haut-gauche du
 creux dans l'ombre, bord bas-droit accroché par la lumière, fond du creux tassé et assombri.
-Le masque du nom (tools/sources/masque-mot.png) est un rendu noir sur blanc de
-assets/img/logo/peachy-mot.svg, en 2400 px de large.
+Le masque du nom (tools/sources/masque-mot.png) est écrit par tools/lettrage.mjs.
 """
 from pathlib import Path
 

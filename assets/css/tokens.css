@@ -49,8 +49,8 @@
   --chocolat: #28170f;           /* chocolat profond */
   --cacao: #4a281a;              /* brun cacao */
   --terracotta: #975d3e;
-  --papier: #734027;             /* papier feutré de la première page */
-  --cuir: #7a4c33;               /* cuir grainé du pied de page */
+  --cuir: #7a4c33;               /* cuir grainé de la couverture et du pied de page */
+  --papier: #734027;             /* papier feutré terracotta */
   --taupe: #b3947f;              /* taupe chaud */
   --sable: #d5bba4;              /* beige sable */
   --creme: #ead9c6;
@@ -61,11 +61,6 @@
   --encre-douce: #5e3a29;                      /* texte secondaire sur fonds clairs (≥ 6:1 sur crème) */
   --lumiere: var(--ivoire);                    /* texte sur fonds sombres */
   --lumiere-douce: #dcc5ae;                    /* texte secondaire sur fonds sombres */
-  /* Dorure : réservée au logo de la première page, jamais à un texte ni à un aplat */
-  --dorure: #ecd0a4;
-  --dorure-claire: #f8e6c8;
-  --dorure-ombre: #d7b182;
-
   --filet-clair: rgb(245 235 222 / 0.26);
   --filet-sombre: rgb(40 23 15 / 0.22);
 
@@ -105,14 +100,13 @@
   --e-5: 4rem;
   --e-6: 6rem;
   --entete: 4.5rem;                                  /* hauteur de la barre de navigation */
-  --apercu: clamp(8.5rem, 22svh, 13rem);             /* part des rituels visible sous la première page */
 
   /* ── Rayons : légers, jamais excessifs ─────────────────────────────────── */
   --rayon-bouton: 3px;
   --rayon-carte: 6px;
   --rayon-photo: 4px;
   --rayon-arche: 999px 999px var(--rayon-photo) var(--rayon-photo);
-  --rayon-voute: clamp(3rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem) var(--rayon-photo) var(--rayon-photo);   /* arche surbaissée des rituels */
+  --voute: clamp(1.5rem, 4vw, 3rem);   /* sommet arrondi d'un chapitre qui vient recouvrir le précédent */
 
   /* ── Ombres : chaudes, décalées, diffuses ──────────────────────────────── */
   --ombre-contact: 0 1px 2px rgb(40 23 15 / 0.16);
@@ -138,13 +132,6 @@
   --z-chapitres: 40;
   --z-entete: 50;
   --z-menu: 60;
-}
-
-/* Tant que les rituels s'empilent (mobile, tablette), seul leur titre dépasse. */
-@media (max-width: 61.99rem) {
-  :root {
-    --apercu: 5.75rem;
-  }
 }
 
 @media (max-width: 47.99rem) {

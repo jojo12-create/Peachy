@@ -38,7 +38,8 @@ Ni site de centre esthétique standard, ni gabarit de spa.
 ## Evidence on Hand
 
 - Moodboard à deux directions (Chocolat immersif, Crème éditoriale), qui donne aussi l'ergonomie du site.
-- Deux maquettes du logo, conservées dans `tools/sources` : logo doré sur papier terracotta, nom gravé dans un cuir.
+- Deux maquettes de Peachy, conservées dans `tools/sources` : papier terracotta, nom gravé dans un cuir.
+- Références de lettrage : identités d'Azuri Studio Solaire (Instagram `azuri_studiosolaire`).
 - Photographies réelles de Peachy, extraites de la grille Instagram `@peachy_lymphatictherapy` (basse définition).
 - Compte Instagram officiel vérifié.
 

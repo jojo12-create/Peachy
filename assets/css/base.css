@@ -14,7 +14,7 @@ html {
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   scroll-padding-top: 0;
-  background: var(--papier);   /* la page s'ouvre sur le papier et se referme sur le cuir */
+  background: var(--cuir);   /* la page s'ouvre et se referme sur le cuir */
   color-scheme: only light;
 }
 
@@ -271,15 +271,25 @@ html {
   background-size: 512px;
 }
 
-/* Cuir grainé de la quatrième de couverture : éclairé au centre, plus dense sur les bords. */
+/* Cuir grainé de la couverture : éclairé au centre, plus dense sur les bords. */
 .fond-cuir {
   --lumiere-douce: var(--creme);   /* ≥ 5:1 sur le cuir */
   background-color: var(--cuir);
   background-image:
-    radial-gradient(90% 26rem at 50% 11rem, rgb(255 214 172 / 0.1), rgb(255 214 172 / 0) 70%),
-    radial-gradient(140% 120% at 50% 36%, rgb(29 16 10 / 0) 46%, rgb(29 16 10 / 0.36) 100%),
+    radial-gradient(75% 60% at 50% 46%, rgb(255 214 172 / 0.11), rgb(255 214 172 / 0) 72%),
+    radial-gradient(140% 125% at 50% 46%, rgb(29 16 10 / 0) 44%, rgb(29 16 10 / 0.38) 100%),
     var(--matiere-cuir);
   background-size: auto, auto, 540px;
+}
+
+/* Papier feutré terracotta : même famille que le cuir, grain plus doux. */
+.fond-papier {
+  --lumiere-douce: var(--creme);
+  background-color: var(--papier);
+  background-image:
+    radial-gradient(110% 80% at 28% 12%, rgb(255 214 172 / 0.08), rgb(255 214 172 / 0) 62%),
+    var(--matiere-papier-terracotta);
+  background-size: auto, 560px;
 }
 
 /* Ombre végétale projetée sur un fond clair. */
@@ -507,6 +517,12 @@ html {
   transform: translateY(-110%);
 }
 
+/* Sur la couverture, rien d'autre que le nom gravé : la barre attend hors champ
+   (elle revient au clavier dès qu'un de ses liens reçoit le focus). */
+html[data-couverture]:not([data-menu]) .entete:not(:focus-within) {
+  transform: translateY(-110%);
+}
+
 .entete__interieur {
   height: var(--entete);
   display: flex;
@@ -515,33 +531,48 @@ html {
   gap: var(--e-3);
 }
 
-/* Le logo de la barre : nom et sous-titre, à la couleur du texte. */
+/* Le nom dans la barre : le lettrage, à la couleur du texte. */
 .marque {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  transition:
-    opacity var(--d-interface) ease,
-    visibility 0s;
 }
 
 .marque__logo {
   display: block;
-  width: 7.5rem;
-  aspect-ratio: 459 / 108;
+  width: 7rem;
+  aspect-ratio: 421.4 / 132;
   background: currentColor;
   -webkit-mask: url("../img/logo/peachy-marque.svg") center / contain no-repeat;
   mask: url("../img/logo/peachy-marque.svg") center / contain no-repeat;
 }
 
-/* Sur la première page, le grand logo est déjà là : celui de la barre attend
-   qu'il soit sorti de l'écran. Le menu ouvert le fait revenir. */
-html[data-accueil]:not([data-menu]) .marque {
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--d-interface) ease,
-    visibility 0s linear var(--d-interface);
+/* Le lettrage de la maison, pour le nom d'une prestation : une ligne par élément.
+   --l : largeur du tracé (unités du SVG) ; --cap : hauteur de capitale voulue. */
+.lettrage {
+  display: block;
+  width: calc(var(--l) / 70 * var(--cap, 2.5rem));
+  max-width: 100%;
+  aspect-ratio: var(--l) / 113;
+  background: currentColor;
+  -webkit-mask: var(--trace) left center / contain no-repeat;
+  mask: var(--trace) left center / contain no-repeat;
+}
+
+.lettrage--drainage {
+  --trace: url("../img/logo/titre-drainage.svg");
+}
+.lettrage--lymphatique {
+  --trace: url("../img/logo/titre-lymphatique.svg");
+}
+.lettrage--luminotherapie {
+  --trace: url("../img/logo/titre-luminotherapie.svg");
+}
+.lettrage--brossage {
+  --trace: url("../img/logo/titre-brossage.svg");
+}
+.lettrage--a-sec {
+  --trace: url("../img/logo/titre-a-sec.svg");
 }
 
 .nav {
@@ -550,7 +581,7 @@ html[data-accueil]:not([data-menu]) .marque {
 
 .nav__liste {
   display: flex;
-  gap: clamp(1.25rem, 2.6vw, 2.75rem);
+  gap: clamp(1rem, 2.2vw, 2.5rem);
 }
 
 .nav__lien {
@@ -794,8 +825,8 @@ html[data-menu] {
       visibility 0s;
   }
 
-  /* Sur la première page, les repères de chapitres restent en retrait. */
-  html[data-accueil] .chapitres:not(:focus-within) {
+  /* Sur la couverture, les repères de chapitres restent en retrait. */
+  html[data-couverture] .chapitres:not(:focus-within) {
     opacity: 0;
     visibility: hidden;
     transition:

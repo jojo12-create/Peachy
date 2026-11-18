@@ -4,108 +4,201 @@
   {
    "id": "drainage-soin",
    "src": "massage-dos",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "chocolat",
-   "widths": [640, 1125, 1528],
+   "widths": [
+    640,
+    1125,
+    1528
+   ],
    "avif": 56,
-   "usage": "03 Drainage — grande photo du soin"
+   "usage": "02 Drainage lymphatique — bannière"
   },
   {
-   "id": "rituel-drainage",
-   "src": "ventre-main",
-   "glyph": [338, 0, 382, 44],
-   "preset": "creme",
-   "crop": [0, 0.04, 1, 0.974],
-   "widths": [480, 800],
-   "usage": "02 Rituels — drainage"
-  },
-  {
-   "id": "rituel-visage",
+   "id": "prestation-luminotherapie",
    "src": "bandeau-mains",
    "preset": "creme",
-   "widths": [480, 800],
-   "usage": "02 Rituels — luminothérapie"
+   "widths": [
+    640,
+    1125,
+    1528
+   ],
+   "usage": "03 Luminothérapie — bannière"
   },
   {
-   "id": "rituel-brossage",
+   "id": "prestation-brossage",
    "src": "brosse",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "chocolat",
-   "crop": [0, 0, 1, 0.948],
-   "widths": [480, 800],
-   "usage": "02 Rituels — brossage"
+   "crop": [
+    0,
+    0,
+    1,
+    0.948
+   ],
+   "widths": [
+    640,
+    1125,
+    1528
+   ],
+   "usage": "04 Brossage à sec — bannière"
   },
   {
    "id": "philosophie-portrait",
    "src": "clavicule-roses",
    "preset": "creme",
-   "widths": [480, 800, 1200],
-   "usage": "04 Philosophie — portrait en arche"
+   "widths": [
+    480,
+    800,
+    1200
+   ],
+   "usage": "05 Philosophie — portrait en arche"
   },
   {
    "id": "philosophie-detail",
    "src": "vase-ombre",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "creme",
-   "widths": [360, 640],
-   "usage": "04 Philosophie — détail"
+   "widths": [
+    360,
+    640
+   ],
+   "usage": "05 Philosophie — détail"
   },
   {
    "id": "geste-main",
    "src": "main-dos",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "chocolat",
-   "crop": [0, 0.44, 1, 1],
-   "widths": [960, 1528],
-   "usage": "05 Le geste — plein écran"
+   "crop": [
+    0,
+    0.44,
+    1,
+    1
+   ],
+   "widths": [
+    960,
+    1528
+   ],
+   "usage": "06 Le geste — plein écran"
   },
   {
    "id": "univers-niches",
    "src": "niches-mur",
    "preset": "creme",
-   "widths": [480, 800, 1200],
-   "usage": "06 Univers — visuel dominant"
+   "widths": [
+    480,
+    800,
+    1200
+   ],
+   "usage": "07 Univers — visuel dominant"
   },
   {
    "id": "univers-jarre",
    "src": "jarre-chapeau",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "creme",
-   "widths": [480, 800],
-   "usage": "06 Univers"
+   "widths": [
+    480,
+    800
+   ],
+   "usage": "07 Univers"
   },
   {
    "id": "univers-huile",
    "src": "mains-huile",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "creme",
-   "widths": [480, 800],
-   "usage": "06 Univers"
+   "widths": [
+    480,
+    800
+   ],
+   "usage": "07 Univers"
   },
   {
    "id": "univers-etageres",
    "src": "niches-haut",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "creme",
-   "crop": [0, 0, 1, 0.47],
-   "widths": [640, 1200],
-   "usage": "06 Univers — bandeau paysage"
+   "crop": [
+    0,
+    0,
+    1,
+    0.47
+   ],
+   "widths": [
+    640,
+    1200
+   ],
+   "usage": "07 Univers — bandeau paysage"
   },
   {
    "id": "univers-buste",
    "src": "buste-niches",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "creme",
-   "widths": [480, 800],
-   "usage": "06 Univers"
+   "widths": [
+    480,
+    800
+   ],
+   "usage": "07 Univers"
   },
   {
    "id": "reserver-dos",
    "src": "dos-fougere",
-   "glyph": [338, 0, 382, 44],
+   "glyph": [
+    338,
+    0,
+    382,
+    44
+   ],
    "preset": "chocolat",
-   "widths": [480, 800, 1200],
-   "usage": "08 Réserver — arche"
+   "widths": [
+    480,
+    800,
+    1200
+   ],
+   "usage": "09 Réserver — arche"
   }
  ]
 }
