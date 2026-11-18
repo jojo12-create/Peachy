@@ -24,6 +24,9 @@ Rien de ce qui suit n'a été inventé : ce qui manque est absent du site ou mar
 | Durées et tarifs | Non fournis, donc absents | À ajouter dans chaque carte |
 | Déroulé de la séance (« un échange, puis le soin, allongée, au chaud ») | Formulation générale à confirmer | `index.html`, section `#drainage` |
 | Textes de marque (philosophie, geste, univers, phrase de la section Expérience) | Rédigés pour la démo | `index.html` |
+| Devise « L'art de prendre soin de soi » | Reprise du moodboard ; première page et pied de page | `index.html` |
+| Lettrage du logo | Tracé d'après la maquette papier. La maquette cuir montre un A sans barre : le site garde le lettrage de la maquette au logo complet, à confirmer | `tools/logo.mjs` |
+| Fichier source du logo (vectoriel) | Non fourni : le logo est tracé d'après une image de 1086 px. Un fichier d'origine (SVG, AI, PDF) donnerait un tracé exact | `assets/img/logo/` |
 | Liens de navigation « À propos » et « Contact » | Repris du moodboard ; ils mènent à la philosophie et au pied de page | `index.html` |
 
 ## Photographies utilisées
@@ -32,13 +35,15 @@ Toutes viennent de la grille Instagram de Peachy. Chaque photo n'apparaît qu'un
 
 | Section | Fichier d'origine |
 |---|---|
-| 01 Hero | `massage-dos` |
-| 02 Philosophie | `clavicule-roses`, `vase-ombre` |
-| 03 Drainage | `jambes` |
-| 04 Rituels | `ventre-main`, `bandeau-mains`, `brosse` |
+| 02 Rituels | `ventre-main`, `bandeau-mains`, `brosse` |
+| 03 Drainage | `massage-dos` |
+| 04 Philosophie | `clavicule-roses`, `vase-ombre` |
 | 05 Le geste | `main-dos` (partie basse : la partie haute porte un texte) |
 | 06 Univers | `niches-mur`, `jarre-chapeau`, `mains-huile`, `niches-haut` (partie haute), `buste-niches` |
 | 08 Réserver | `dos-fougere` |
+
+La première page ne porte aucune photo : le papier et le logo doré. `jambes`, qui illustrait le drainage, n'est plus
+sur la page (la photo du soin a pris sa place) ; elle reste dans les originaux.
 
 Non retenues : la photo avec le magazine et le masque (marques visibles), le flacon d'huile (marque visible),
 les portraits de personnes reconnaissables, la plage, les visuels avec texte, la vue large de la salle,

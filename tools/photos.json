@@ -2,36 +2,13 @@
  "_": "Manifeste des photos du site. src = fichier de photos/originaux (sans extension). crop = fractions [x0, y0, x1, y1] de l'original. glyph = pictogramme Instagram à effacer [x0, y0, x1, y1] en pixels de l'original. preset = charte de retouche (chocolat | creme).",
  "photos": [
   {
-   "id": "hero",
+   "id": "drainage-soin",
    "src": "massage-dos",
    "glyph": [338, 0, 382, 44],
    "preset": "chocolat",
    "widths": [640, 1125, 1528],
    "avif": 56,
-   "usage": "01 Hero — photo entière (plein cadre sur mobile, volet droit sur ordinateur)"
-  },
-  {
-   "id": "philosophie-portrait",
-   "src": "clavicule-roses",
-   "preset": "creme",
-   "widths": [480, 800, 1200],
-   "usage": "02 Philosophie — portrait en arche"
-  },
-  {
-   "id": "philosophie-detail",
-   "src": "vase-ombre",
-   "glyph": [338, 0, 382, 44],
-   "preset": "creme",
-   "widths": [360, 640],
-   "usage": "02 Philosophie — détail"
-  },
-  {
-   "id": "drainage-jambes",
-   "src": "jambes",
-   "glyph": [338, 0, 382, 44],
-   "preset": "chocolat",
-   "widths": [640, 1125, 1528],
-   "usage": "03 Drainage — grande photo"
+   "usage": "03 Drainage — grande photo du soin"
   },
   {
    "id": "rituel-drainage",
@@ -40,14 +17,14 @@
    "preset": "creme",
    "crop": [0, 0.04, 1, 0.974],
    "widths": [480, 800],
-   "usage": "04 Rituels — carte drainage"
+   "usage": "02 Rituels — drainage"
   },
   {
    "id": "rituel-visage",
    "src": "bandeau-mains",
    "preset": "creme",
    "widths": [480, 800],
-   "usage": "04 Rituels — carte visage"
+   "usage": "02 Rituels — luminothérapie"
   },
   {
    "id": "rituel-brossage",
@@ -56,7 +33,22 @@
    "preset": "chocolat",
    "crop": [0, 0, 1, 0.948],
    "widths": [480, 800],
-   "usage": "04 Rituels — carte brossage"
+   "usage": "02 Rituels — brossage"
+  },
+  {
+   "id": "philosophie-portrait",
+   "src": "clavicule-roses",
+   "preset": "creme",
+   "widths": [480, 800, 1200],
+   "usage": "04 Philosophie — portrait en arche"
+  },
+  {
+   "id": "philosophie-detail",
+   "src": "vase-ombre",
+   "glyph": [338, 0, 382, 44],
+   "preset": "creme",
+   "widths": [360, 640],
+   "usage": "04 Philosophie — détail"
   },
   {
    "id": "geste-main",

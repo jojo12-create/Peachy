@@ -8,15 +8,21 @@ Les valeurs vivent dans `assets/css/tokens.css` : on y ajoute, on ne les contour
 Une maison de soin, pas un centre esthétique. Deux univers du moodboard, fusionnés dans une seule page
 qui alterne les chapitres :
 
-- **Chocolat immersif** (hero, drainage, geste, réservation, pied de page) : chocolat profond, lumière chaude, peau, gestes.
-- **Crème éditoriale** (philosophie, rituels, univers, expérience) : ivoire, crème, sable, enduit, ombres végétales.
+- **Chocolat immersif** (drainage, geste, réservation) : chocolat profond, lumière chaude, peau, gestes.
+- **Crème éditoriale** (rituels, philosophie, univers, expérience) : ivoire, crème, sable, enduit, ombres végétales.
+
+Et deux couvertures terracotta, tirées des maquettes du logo : la page **s'ouvre sur le papier feutré**, logo doré
+(première page), et **se referme sur le cuir grainé**, nom gravé à blanc (pied de page).
 
 La beauté tient à la composition, aux proportions, à la lumière, à la typographie et aux matières.
 Jamais à un effet.
 
 ## Couleur
 
-- **Palette fermée** : `--chocolat-nuit` `--chocolat` `--cacao` `--terracotta` `--taupe` `--sable` `--creme` `--ivoire`.
+- **Palette fermée** : `--chocolat-nuit` `--chocolat` `--cacao` `--terracotta` `--taupe` `--sable` `--creme` `--ivoire`,
+  plus les deux couvertures : `--papier` et `--cuir`, dont la couleur est relevée sur les maquettes.
+- **Dorure** (`--dorure`, `--dorure-claire`, `--dorure-ombre`) : réservée au logo de la première page.
+  Jamais pour un texte, un bouton ou un aplat.
   Pas de noir absolu ni de blanc pur, y compris dans les ombres (toujours `rgb(40 23 15 / α)`).
 - **Texte** : `--encre` / `--encre-douce` sur fonds clairs, `--lumiere` / `--lumiere-douce` sur fonds sombres.
   Le texte secondaire est teinté de la palette, jamais gris.
@@ -29,23 +35,39 @@ Jamais à un effet.
   **Inter** pour navigation, boutons, descriptions. Polices hébergées dans `assets/fonts`.
 - L'emphase d'un titre passe par l'**italique** (`<em>`), jamais par la graisse ni la couleur.
 - Tailles fluides (`--t-*`), titres équilibrés (`text-wrap: balance`), paragraphes courts (≤ 38em).
-- **Aucun texte utile sous 12 px.** Le sous-titre du logo dans la barre (9 px) fait partie du logo, doublé par un `aria-label`.
+- **Aucun texte utile sous 12 px.** Le sous-titre du logo fait partie du dessin du logo, doublé par un `aria-label`.
 - **Pas de surtitre** au-dessus d'un titre, pas de numéros de section.
+
+## Logo
+
+- **Le logo est celui de la maquette fournie par Peachy** (la pêche, PEACHY, LYMPHATIC THERAPY) : il est tracé d'après
+  elle par `tools/logo.py` puis `tools/logo.mjs`, jamais redessiné ni recomposé dans une police approchante.
+  <!-- 2026-11-18 : « Crée le site de peachy lymphatic drainage à partir de ce nouveau logo » -->
+- Fichiers (`assets/img/logo`) : logo complet (`peachy-logo-*`), pêche seule (`peachy-symbole`), nom et sous-titre
+  (`peachy-mot`), et `peachy-marque` pour les petites tailles (sous-titre agrandi, justifié sur le nom).
+- Le logo s'affiche par masque : il prend la couleur du texte dans la barre, la dorure sur la première page.
+- Dans la barre, le logo attend que le grand logo de la première page soit sorti de l'écran : jamais les deux ensemble.
 
 ## Matières
 
-- Chaque fond = une couleur de la palette + une matière transparente posée dessus
-  (`.fond-chocolat`, `.fond-nuit`, `.fond-ivoire`, `.fond-creme`, `.fond-sable`).
-  Les matières sont générées par `tools/textures.py` (papier, enduit, chocolat, lin, ombre de palme).
+- Chaque fond = une couleur de la palette + une matière posée dessus
+  (`.fond-chocolat`, `.fond-nuit`, `.fond-ivoire`, `.fond-creme`, `.fond-sable`, `.fond-cuir`).
+  Papier, enduit, chocolat, lin et ombre de palme sont générés par `tools/textures.py`.
+- **Le papier feutré et le cuir grainé reprennent le grain des maquettes** : `tools/couverture.py` relève la signature
+  d'une zone sans logo et la rejoue sur une tuile sans couture. On ne les remplace pas par une texture approchante.
+  <!-- 2026-11-18 : « à partir de ce nouveau logo / métrages », maquettes papier et cuir jointes -->
 - Les matières restent à la limite du visible. Si un motif répété se lit, la texture est trop forte.
 - Les ombres végétales (`.ombre-vegetale`) ne se posent que derrière le contenu, jamais sur du texte.
-- Le symbole du logo peut être **débossé** dans un fond sombre (section Réserver). Jamais au détriment d'un texte.
+- Le logo peut être **gravé à blanc** (débossé) dans un fond sombre : la pêche dans la section Réserver, le nom dans le
+  cuir du pied de page. Jamais au détriment d'un texte.
 
 ## Surfaces, cartes, ombres
 
 - Une carte se détache par **contraste de matière et ombre de contact** (`--ombre-carte`), jamais par une bordure épaisse.
 - Rayons légers : `--rayon-bouton` 3 px, `--rayon-photo` 4 px, `--rayon-carte` 6 px.
-  La seule forme ronde est l'**arche** (`--rayon-arche`), motif repris des niches du lieu.
+  La seule forme ronde est l'**arche**, motif repris des niches du lieu : plein cintre (`--rayon-arche`) ou
+  surbaissée pour les rituels (`--rayon-voute`), comme sur la maquette.
+- Les rituels ne sont pas des cartes : une photo sous voûte, son nom, une phrase, un lien. Pas de fond, pas de cadre.
 - Pas de carte dans une carte.
 
 ## Boutons
@@ -74,23 +96,29 @@ Jamais à un effet.
 - Une photo n'apparaît qu'une fois sur la page. Aucune légende sous une image.
 - Une photo n'est jamais affichée au-delà de ce que sa définition permet : on réduit le cadre plutôt que d'agrandir un flou.
 
-## Couverture
+## Première page
 
-- **La première page n'est que le logo, gravé dans le papier.** Ni titre, ni bouton, ni barre de navigation :
-  la barre et les chapitres n'apparaissent qu'en quittant la couverture. Seul un trait discret invite à descendre.
-  <!-- 2026-11-18 : « La première page je veux juste ça. » -->
-- **Le logo de la couverture est de la couleur du fond, gravé à blanc** (débossage) : aucune encre, aucune dorure.
-  Il n'existe que par l'ombre et la lumière du creux.
-  <!-- 2026-11-18 : « Retravaille pour que même le logo soit de la couleur du fond mais en gravé comme dans du papier » -->
-- **Le papier** est un terracotta feutré (`--papier`), à fibres visibles et rares inclusions, éclairé du haut à gauche.
-  Papier et gravure partagent la même lumière : ils sortent tous deux de `tools/couverture.py`.
-  <!-- 2026-11-18 : « Travaille la texture pour que ça soit comme sur les moods donnés, pareil pour la DA et la gravure » -->
+- **La première page reprend la page du logo à la pêche** : le papier terracotta feutré, le logo doré au centre.
+  Elle a l'ergonomie de la maquette du site : barre de navigation, devise, un seul bouton « Réserver un soin »,
+  et le haut des rituels qui dépasse en bas de l'écran (`--apercu`).
+  <!-- 2026-11-18 : « fais cette ergonomie de site comme sur exemple avec une hero page qui est inspirée de la page avec logo pêche » -->
+  Cette demande remplace la couverture précédente (logo seul, gravé à blanc, sans barre ni bouton).
+- **Rien d'autre sur le papier** : ni photo, ni second bouton, ni texte d'introduction. Le logo domine, la devise
+  « L'art de prendre soin de soi » reste petite, en italique.
+- **La dorure** est un métal crème mat qui garde le grain du papier. Elle laisse une ombre de contact, pas un halo.
+- **Le papier** est éclairé du haut à gauche, un peu plus dense sur les bords. Il porte son ombre sur le bandeau des rituels.
+- **Le pied de page est l'autre couverture** : le cuir, et le nom gravé à blanc, sans encre ni dorure,
+  qui n'existe que par l'ombre et la lumière du creux.
 
 ## Mise en page
 
-- Une suite de **chapitres plein écran** (`min-height: 100svh`). Un contenu long peut dépasser la hauteur d'un écran.
-- Chaque chapitre a sa composition : diptyque (hero), asymétrie texte/arche (philosophie), photo pleine hauteur (drainage),
-  cartes (rituels), tableau à fond perdu (geste), galerie éditoriale (univers), colonne sobre (expérience), arche + appel (réserver).
+- **L'ordre de la page est celui de la barre** : les rituels, le drainage lymphatique, la philosophie (« À propos »),
+  puis le geste, l'univers, l'expérience, la réservation et le contact.
+- Une suite de **chapitres plein écran** (`min-height: 100svh`), sauf la première page et le bandeau des rituels,
+  qui se partagent le premier écran. Un contenu long peut dépasser la hauteur d'un écran.
+- Chaque chapitre a sa composition : logo centré (première page), bandeau titre + trois voûtes (rituels),
+  photo pleine hauteur (drainage), asymétrie texte/arche (philosophie), tableau à fond perdu (geste),
+  galerie éditoriale (univers), colonne sobre (expérience), arche + appel (réserver), nom gravé (pied de page).
   Deux chapitres voisins ne partagent jamais la même structure.
 - Marges latérales égales : tout s'aligne sur `.cadre` (`--gouttiere`, `--largeur`).
 - Mobile d'abord. Les compositions éditoriales commencent à `62rem`.
@@ -100,11 +128,13 @@ Jamais à un effet.
 
 - Courbes : `--ease-out` (entrées, sorties, survols) et `--ease-in-out` (déplacements). Jamais `ease-in`, jamais `transition: all`.
 - Propriétés animées : `transform`, `opacity`, `clip-path`. Jamais `width`, `height`, `margin`, `top`, `left`.
-- **Couverture** : la gravure apparaît lentement au chargement, comme pressée dans le papier.
-- **Hero** : une entrée quand il arrive à l'écran (titre ligne à ligne, puis filet, texte, boutons). Rien ne bloque le clic.
+- **Première page** : un seul mouvement au chargement. Le logo se pose, un reflet traverse la dorure une fois, puis
+  viennent le filet, la devise, le bouton et le haut des rituels. Rien ne bloque le clic.
+- **Reflet** : à la souris, une bande de lumière suit le geste sur la dorure, discrète (50 %). Rien au toucher.
 - **Révélations** (`data-reveal`) : `monte` pour le texte, `photo` pour les images (masque de bas en haut), `trait` pour les filets.
   Une seule fois, décalages courts et dégressifs (`--pas`, `--i`). Le contenu est visible sans JavaScript.
-- **Liés au défilement** : dérive du hero, cadrage du geste, glissement du détail. En CSS (`animation-timeline`), amplitude minime.
+- **Liés au défilement** : le logo s'enfonce un peu en quittant la première page, cadrage du geste, glissement du détail.
+  En CSS (`animation-timeline`), amplitude minime.
 - Tout survol est derrière `@media (hover: hover) and (pointer: fine)`. Tout élément tactile a un état `:active`.
 - `prefers-reduced-motion` : plus aucun déplacement, un fondu court.
 - Pas d'animation sur ce qui s'utilise au clavier ou plusieurs fois par visite (liens de la barre, chapitres).

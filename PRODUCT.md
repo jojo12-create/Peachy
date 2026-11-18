@@ -31,13 +31,14 @@ Ni site de centre esthétique standard, ni gabarit de spa.
 
 - Action principale : **réserver un soin**. Le lien de réservation est centralisé dans `assets/js/config.js`.
   Tant qu'il n'est pas fourni, le bouton mène au compte Instagram officiel.
-- Une seule page en chapitres plein écran, plus deux pages de texte (mentions légales, confidentialité).
+- Une seule page en chapitres, plus deux pages de texte (mentions légales, confidentialité).
 - Aucune promesse médicale. Aucun contenu inventé (adresse, tarifs, durées, certifications, témoignages).
 - Performances et accessibilité passent avant les effets. Respect de `prefers-reduced-motion`.
 
 ## Evidence on Hand
 
-- Moodboard à deux directions (Chocolat immersif, Crème éditoriale) et logo Peachy.
+- Moodboard à deux directions (Chocolat immersif, Crème éditoriale), qui donne aussi l'ergonomie du site.
+- Deux maquettes du logo, conservées dans `tools/sources` : logo doré sur papier terracotta, nom gravé dans un cuir.
 - Photographies réelles de Peachy, extraites de la grille Instagram `@peachy_lymphatictherapy` (basse définition).
 - Compte Instagram officiel vérifié.
 

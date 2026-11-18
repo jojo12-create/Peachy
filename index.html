@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Peachy — Lymphatic Therapy · Drainage lymphatique et rituels de soin</title>
     <meta name="description" content="Peachy, maison de soin dédiée au drainage lymphatique. Des gestes lents et précis, une lumière douce, un lieu pensé pour ralentir. Réservez votre soin.">
-    <meta name="theme-color" content="#7a462b">
+    <meta name="theme-color" content="#734027">
     <meta name="color-scheme" content="only light">
     <meta name="format-detection" content="telephone=no">
 
@@ -26,7 +26,8 @@
 
     <link rel="preload" href="assets/fonts/playfair-display-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" as="image" type="image/webp" href="assets/img/logo/peachy-gravure.webp" fetchpriority="high">
+    <link rel="preload" href="assets/fonts/playfair-display-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" type="image/svg+xml" href="assets/img/logo/peachy-logo-mono.svg" crossorigin fetchpriority="high">
     <link rel="preload" as="image" type="image/webp" href="assets/img/textures/papier-terracotta.webp">
 
     <link rel="stylesheet" href="assets/css/tokens.css">
@@ -34,7 +35,7 @@
     <link rel="stylesheet" href="assets/css/sections.css">
     <link rel="stylesheet" href="assets/css/motion.css">
 
-    <script>document.documentElement.classList.add("js");if(scrollY<innerHeight/2)document.documentElement.setAttribute("data-couverture","");</script>
+    <script>document.documentElement.classList.add("js");if(scrollY<innerHeight/3)document.documentElement.setAttribute("data-accueil","");</script>
     <script type="module" src="assets/js/main.js"></script>
 
     <script type="application/ld+json">
@@ -55,8 +56,7 @@
     <header class="entete" data-tone="dark">
       <div class="cadre entete__interieur">
         <a class="marque" href="#accueil" aria-label="Peachy Lymphatic Therapy, retour à l’accueil">
-          <span class="marque__nom" aria-hidden="true">Peachy</span>
-          <span class="marque__sous" aria-hidden="true">Lymphatic Therapy</span>
+          <span class="marque__logo" aria-hidden="true"></span>
         </a>
 
         <nav class="nav" aria-label="Navigation principale">
@@ -81,9 +81,9 @@
     <div class="menu" id="menu">
       <nav aria-label="Menu">
         <ul class="menu__liste">
-          <li><a class="menu__lien" href="#philosophie">La philosophie</a></li>
-          <li><a class="menu__lien" href="#drainage">Le drainage lymphatique</a></li>
           <li><a class="menu__lien" href="#rituels">Les rituels</a></li>
+          <li><a class="menu__lien" href="#drainage">Le drainage lymphatique</a></li>
+          <li><a class="menu__lien" href="#philosophie">La philosophie</a></li>
           <li><a class="menu__lien" href="#univers">L’univers</a></li>
           <li><a class="menu__lien" href="#contact">Contact</a></li>
         </ul>
@@ -97,78 +97,86 @@
     <!-- ══ Chapitres : progression et accès direct (ordinateur) ═════════ -->
     <nav class="chapitres" aria-label="Chapitres de la page" data-tone="dark">
       <a class="chapitres__lien" href="#accueil"><span class="chapitres__nom">Accueil</span><span class="chapitres__trait" aria-hidden="true"></span></a>
-      <a class="chapitres__lien" href="#philosophie"><span class="chapitres__nom">Philosophie</span><span class="chapitres__trait" aria-hidden="true"></span></a>
-      <a class="chapitres__lien" href="#drainage"><span class="chapitres__nom">Drainage</span><span class="chapitres__trait" aria-hidden="true"></span></a>
       <a class="chapitres__lien" href="#rituels"><span class="chapitres__nom">Rituels</span><span class="chapitres__trait" aria-hidden="true"></span></a>
-      <a class="chapitres__lien" href="#geste">  <span class="chapitres__nom">Le geste</span><span class="chapitres__trait" aria-hidden="true"></span></a>
+      <a class="chapitres__lien" href="#drainage"><span class="chapitres__nom">Drainage</span><span class="chapitres__trait" aria-hidden="true"></span></a>
+      <a class="chapitres__lien" href="#philosophie"><span class="chapitres__nom">Philosophie</span><span class="chapitres__trait" aria-hidden="true"></span></a>
+      <a class="chapitres__lien" href="#geste"><span class="chapitres__nom">Le geste</span><span class="chapitres__trait" aria-hidden="true"></span></a>
       <a class="chapitres__lien" href="#univers"><span class="chapitres__nom">L’univers</span><span class="chapitres__trait" aria-hidden="true"></span></a>
       <a class="chapitres__lien" href="#experience"><span class="chapitres__nom">L’expérience</span><span class="chapitres__trait" aria-hidden="true"></span></a>
       <a class="chapitres__lien" href="#reserver"><span class="chapitres__nom">Réserver</span><span class="chapitres__trait" aria-hidden="true"></span></a>
     </nav>
 
     <main id="contenu">
-      <!-- ══ Couverture : le logo gravé dans le papier ══════════════════ -->
-      <section class="couverture" id="ouverture" data-tone="dark">
-        <h1 class="sr">Peachy — Lymphatic Therapy</h1>
-        <img class="couverture__gravure" src="assets/img/logo/peachy-gravure.webp" width="1380" height="1133" alt="" fetchpriority="high" decoding="async">
-        <a class="couverture__suite" href="#accueil" aria-label="Entrer sur le site"><span aria-hidden="true"></span></a>
-      </section>
-
-      <!-- ══ 01 · Hero immersif ═════════════════════════════════════════ -->
-      <section class="section hero ton-sombre fond-chocolat" id="accueil" data-tone="dark">
-        <div class="ombre-vegetale ombre-vegetale--gauche" aria-hidden="true"></div>
-        <div class="hero__media">
-          <picture>
-            <source type="image/avif" srcset="assets/img/photos/hero-640.avif 640w, assets/img/photos/hero-1125.avif 1125w, assets/img/photos/hero-1528.avif 1528w" sizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw">
-            <img src="assets/img/photos/hero-1528.webp" srcset="assets/img/photos/hero-640.webp 640w, assets/img/photos/hero-1125.webp 1125w, assets/img/photos/hero-1528.webp 1528w" sizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw" width="1528" height="2044" alt="Deux mains posées sur un dos huilé, pendant un soin chez Peachy" loading="lazy" decoding="async">
-          </picture>
-        </div>
-        <div class="hero__voile" aria-hidden="true"></div>
-
+      <!-- ══ 01 · Première page : le logo doré sur le papier ═════════════ -->
+      <section class="hero" id="accueil" data-tone="dark">
         <div class="cadre hero__contenu">
-          <h2 class="titre-hero">
-            <span class="ligne" style="--i: 0"><span class="ligne__texte">L’art de prendre</span></span>
-            <span class="ligne" style="--i: 1"><span class="ligne__texte">soin de soi</span></span>
-          </h2>
+          <h1 class="hero__logo">
+            <span class="sr">Peachy — Lymphatic Therapy</span>
+            <span class="dorure" aria-hidden="true"><span class="dorure__reflet"></span></span>
+          </h1>
           <hr class="filet">
-          <p class="chapo">Un lieu dédié au drainage lymphatique, où chaque séance devient un temps de calme, de chaleur et d’attention.</p>
+          <p class="hero__devise">L’art de prendre soin de soi</p>
           <div class="hero__actions">
-            <a class="btn btn--ivoire" href="#rituels">Découvrir nos soins <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
-            <a class="btn btn--contour" href="#reserver">Réserver un soin</a>
+            <a class="btn btn--ivoire" href="#reserver">Réserver un soin <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
           </div>
         </div>
-
-        <a class="hero__suite" href="#philosophie">
-          <span>Découvrir</span>
-          <span class="hero__suite-trait" aria-hidden="true"></span>
-        </a>
       </section>
 
-      <!-- ══ 02 · La philosophie Peachy ═════════════════════════════════ -->
-      <section class="section philosophie fond-ivoire" id="philosophie" data-tone="light">
-        <div class="ombre-vegetale" aria-hidden="true"></div>
-        <div class="cadre philosophie__grille">
-          <div class="philosophie__texte">
-            <h2 class="titre" data-reveal="monte">Ici, le soin <em>prend son temps.</em></h2>
+      <!-- ══ 02 · Les rituels ═══════════════════════════════════════════ -->
+      <!-- Le haut de ce chapitre se voit dès la première page, sous le papier. -->
+      <section class="rituels fond-creme" id="rituels" data-tone="light" data-entree>
+        <div class="cadre rituels__grille">
+          <header class="rituels__entete">
+            <h2 class="titre" data-reveal="monte">Les rituels</h2>
             <hr class="filet" data-reveal="trait" style="--i: 1">
-            <p class="chapo" data-reveal="monte" style="--i: 2">Chez Peachy, rien ne presse. Une lumière douce, un linge épais, des gestes précis&nbsp;: chaque détail est là pour que le corps se dépose, et que l’esprit suive.</p>
-            <p class="texte" data-reveal="monte" style="--i: 3">Vous venez comme vous êtes. Le temps du soin vous appartient.</p>
-          </div>
+            <p class="texte" data-reveal="monte" style="--i: 2">Trois façons de prendre soin de soi chez Peachy. Chaque rituel se réserve seul, ou se compose avec les autres.</p>
+          </header>
 
-          <div class="philosophie__visuels">
-            <figure class="photo photo--arche philosophie__portrait" data-reveal="photo">
-              <picture>
-            <source type="image/avif" srcset="assets/img/photos/philosophie-portrait-480.avif 480w, assets/img/photos/philosophie-portrait-800.avif 800w, assets/img/photos/philosophie-portrait-1200.avif 1200w" sizes="(min-width: 62rem) 29rem, (min-width: 26rem) 24rem, 90vw">
-            <img src="assets/img/photos/philosophie-portrait-1200.webp" srcset="assets/img/photos/philosophie-portrait-480.webp 480w, assets/img/photos/philosophie-portrait-800.webp 800w, assets/img/photos/philosophie-portrait-1200.webp 1200w" sizes="(min-width: 62rem) 29rem, (min-width: 26rem) 24rem, 90vw" width="1200" height="1605" alt="Clavicule et épaule dans un peignoir clair, un bouquet de roses anciennes au premier plan" loading="lazy" decoding="async">
-          </picture>
-            </figure>
-            <figure class="photo philosophie__detail" data-reveal="photo" style="--i: 3">
-              <picture>
-            <source type="image/avif" srcset="assets/img/photos/philosophie-detail-360.avif 360w, assets/img/photos/philosophie-detail-640.avif 640w" sizes="(min-width: 62rem) 12rem, 9rem">
-            <img src="assets/img/photos/philosophie-detail-640.webp" srcset="assets/img/photos/philosophie-detail-360.webp 360w, assets/img/photos/philosophie-detail-640.webp 640w" sizes="(min-width: 62rem) 12rem, 9rem" width="640" height="838" alt="Vase en terre cuite et fleurs séchées dans un rayon de lumière" loading="lazy" decoding="async">
-          </picture>
-            </figure>
-          </div>
+          <!-- Rituels : noms relevés sur le compte Instagram de Peachy.
+               À valider (noms, descriptions) et à compléter (durées, tarifs)
+               avec les informations fournies par Peachy. -->
+          <ul class="rituels__liste">
+            <li>
+              <article class="rituel" id="rituel-drainage" data-reveal="monte" style="--i: 1">
+                <figure class="photo rituel__photo">
+                  <picture>
+                    <source type="image/avif" srcset="assets/img/photos/rituel-drainage-480.avif 480w, assets/img/photos/rituel-drainage-800.avif 800w" sizes="(min-width: 62rem) 24vw, 78vw">
+                    <img src="assets/img/photos/rituel-drainage-800.webp" srcset="assets/img/photos/rituel-drainage-480.webp 480w, assets/img/photos/rituel-drainage-800.webp 800w" sizes="(min-width: 62rem) 24vw, 78vw" width="800" height="999" alt="Mains posées sur le ventre, le corps enveloppé de serviettes claires" loading="lazy" decoding="async">
+                  </picture>
+                </figure>
+                <h3 class="sous-titre">Drainage lymphatique</h3>
+                <p>Le soin au cœur de la maison. Des gestes lents, précis et enveloppants.</p>
+                <a class="lien" href="#reserver" aria-label="Réserver le drainage lymphatique"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
+              </article>
+            </li>
+            <li>
+              <article class="rituel" id="rituel-luminotherapie" data-reveal="monte" style="--i: 2">
+                <figure class="photo rituel__photo">
+                  <picture>
+                    <source type="image/avif" srcset="assets/img/photos/rituel-visage-480.avif 480w, assets/img/photos/rituel-visage-800.avif 800w" sizes="(min-width: 62rem) 24vw, 78vw">
+                    <img src="assets/img/photos/rituel-visage-800.webp" srcset="assets/img/photos/rituel-visage-480.webp 480w, assets/img/photos/rituel-visage-800.webp 800w" sizes="(min-width: 62rem) 24vw, 78vw" width="800" height="982" alt="Visage reposé sous les mains, cheveux retenus par un bandeau en éponge" loading="lazy" decoding="async">
+                  </picture>
+                </figure>
+                <h3 class="sous-titre">Luminothérapie</h3>
+                <p>La lumière comme soin. Un temps de pause pour le visage, les yeux fermés.</p>
+                <a class="lien" href="#reserver" aria-label="Réserver la luminothérapie"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
+              </article>
+            </li>
+            <li>
+              <article class="rituel" id="rituel-brossage" data-reveal="monte" style="--i: 3">
+                <figure class="photo rituel__photo">
+                  <picture>
+                    <source type="image/avif" srcset="assets/img/photos/rituel-brossage-480.avif 480w, assets/img/photos/rituel-brossage-800.avif 800w" sizes="(min-width: 62rem) 24vw, 78vw">
+                    <img src="assets/img/photos/rituel-brossage-800.webp" srcset="assets/img/photos/rituel-brossage-480.webp 480w, assets/img/photos/rituel-brossage-800.webp 800w" sizes="(min-width: 62rem) 24vw, 78vw" width="800" height="1001" alt="Brosse en fibres naturelles et son ombre sur un mur terracotta" loading="lazy" decoding="async">
+                  </picture>
+                </figure>
+                <h3 class="sous-titre">Brossage à sec</h3>
+                <p>Un geste de préparation, tonique et doux à la fois, pour réveiller la peau.</p>
+                <a class="lien" href="#reserver" aria-label="Réserver le brossage à sec"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
+              </article>
+            </li>
+          </ul>
+          <div class="rituels__points" aria-hidden="true"><span data-actif></span><span></span><span></span></div>
         </div>
       </section>
 
@@ -176,8 +184,8 @@
       <section class="section drainage ton-sombre fond-chocolat" id="drainage" data-tone="dark">
         <figure class="photo drainage__photo" data-reveal="photo">
           <picture>
-            <source type="image/avif" srcset="assets/img/photos/drainage-jambes-640.avif 640w, assets/img/photos/drainage-jambes-1125.avif 1125w, assets/img/photos/drainage-jambes-1528.avif 1528w" sizes="(min-width: 62rem) 46vw, 100vw">
-            <img src="assets/img/photos/drainage-jambes-1528.webp" srcset="assets/img/photos/drainage-jambes-640.webp 640w, assets/img/photos/drainage-jambes-1125.webp 1125w, assets/img/photos/drainage-jambes-1528.webp 1528w" sizes="(min-width: 62rem) 46vw, 100vw" width="1528" height="2000" alt="Jambes levées contre un mur clair, dans une lumière chaude de fin de journée" loading="lazy" decoding="async">
+            <source type="image/avif" srcset="assets/img/photos/drainage-soin-640.avif 640w, assets/img/photos/drainage-soin-1125.avif 1125w, assets/img/photos/drainage-soin-1528.avif 1528w" sizes="(min-width: 62rem) 46vw, 100vw">
+            <img src="assets/img/photos/drainage-soin-1528.webp" srcset="assets/img/photos/drainage-soin-640.webp 640w, assets/img/photos/drainage-soin-1125.webp 1125w, assets/img/photos/drainage-soin-1528.webp 1528w" sizes="(min-width: 62rem) 46vw, 100vw" width="1528" height="2044" alt="Deux mains posées sur un dos huilé, pendant un soin chez Peachy" loading="lazy" decoding="async">
           </picture>
         </figure>
 
@@ -208,65 +216,31 @@
         </div>
       </section>
 
-      <!-- ══ 04 · Les rituels ═══════════════════════════════════════════ -->
-      <section class="section rituels fond-creme" id="rituels" data-tone="light">
-        <div class="cadre">
-          <header class="rituels__entete">
-            <h2 class="titre" data-reveal="monte">Les rituels</h2>
-            <p class="texte" data-reveal="monte" style="--i: 1">Trois façons de prendre soin de soi chez Peachy. Chaque rituel se réserve seul, ou se compose avec les autres.</p>
-          </header>
+      <!-- ══ 04 · La philosophie Peachy ═════════════════════════════════ -->
+      <section class="section philosophie fond-ivoire" id="philosophie" data-tone="light">
+        <div class="ombre-vegetale" aria-hidden="true"></div>
+        <div class="cadre philosophie__grille">
+          <div class="philosophie__texte">
+            <h2 class="titre" data-reveal="monte">Ici, le soin <em>prend son temps.</em></h2>
+            <hr class="filet" data-reveal="trait" style="--i: 1">
+            <p class="chapo" data-reveal="monte" style="--i: 2">Chez Peachy, rien ne presse. Une lumière douce, un linge épais, des gestes précis&nbsp;: chaque détail est là pour que le corps se dépose, et que l’esprit suive.</p>
+            <p class="texte" data-reveal="monte" style="--i: 3">Vous venez comme vous êtes. Le temps du soin vous appartient.</p>
+          </div>
 
-          <!-- Rituels : noms relevés sur le compte Instagram de Peachy.
-               À valider (noms, descriptions) et à compléter (durées, tarifs)
-               avec les informations fournies par Peachy. -->
-          <ul class="rituels__liste" data-groupe>
-            <li>
-              <article class="carte" id="rituel-drainage" data-reveal="monte">
-                <figure class="photo carte__photo">
-                  <picture>
-            <source type="image/avif" srcset="assets/img/photos/rituel-drainage-480.avif 480w, assets/img/photos/rituel-drainage-800.avif 800w" sizes="(min-width: 62rem) 30vw, 82vw">
-            <img src="assets/img/photos/rituel-drainage-800.webp" srcset="assets/img/photos/rituel-drainage-480.webp 480w, assets/img/photos/rituel-drainage-800.webp 800w" sizes="(min-width: 62rem) 30vw, 82vw" width="800" height="999" alt="Mains posées sur le ventre, le corps enveloppé de serviettes claires" loading="lazy" decoding="async">
+          <div class="philosophie__visuels">
+            <figure class="photo photo--arche philosophie__portrait" data-reveal="photo">
+              <picture>
+            <source type="image/avif" srcset="assets/img/photos/philosophie-portrait-480.avif 480w, assets/img/photos/philosophie-portrait-800.avif 800w, assets/img/photos/philosophie-portrait-1200.avif 1200w" sizes="(min-width: 62rem) 29rem, (min-width: 26rem) 24rem, 90vw">
+            <img src="assets/img/photos/philosophie-portrait-1200.webp" srcset="assets/img/photos/philosophie-portrait-480.webp 480w, assets/img/photos/philosophie-portrait-800.webp 800w, assets/img/photos/philosophie-portrait-1200.webp 1200w" sizes="(min-width: 62rem) 29rem, (min-width: 26rem) 24rem, 90vw" width="1200" height="1605" alt="Clavicule et épaule dans un peignoir clair, un bouquet de roses anciennes au premier plan" loading="lazy" decoding="async">
           </picture>
-                </figure>
-                <div class="carte__corps">
-                  <h3 class="sous-titre">Drainage lymphatique</h3>
-                  <p>Le soin au cœur de la maison. Des gestes lents, précis et enveloppants.</p>
-                  <a class="lien" href="#reserver" aria-label="Réserver le drainage lymphatique"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
-                </div>
-              </article>
-            </li>
-            <li>
-              <article class="carte" id="rituel-luminotherapie" data-reveal="monte" style="--i: 1">
-                <figure class="photo carte__photo">
-                  <picture>
-            <source type="image/avif" srcset="assets/img/photos/rituel-visage-480.avif 480w, assets/img/photos/rituel-visage-800.avif 800w" sizes="(min-width: 62rem) 30vw, 82vw">
-            <img src="assets/img/photos/rituel-visage-800.webp" srcset="assets/img/photos/rituel-visage-480.webp 480w, assets/img/photos/rituel-visage-800.webp 800w" sizes="(min-width: 62rem) 30vw, 82vw" width="800" height="982" alt="Visage reposé sous les mains, cheveux retenus par un bandeau en éponge" loading="lazy" decoding="async">
+            </figure>
+            <figure class="photo philosophie__detail" data-reveal="photo" style="--i: 3">
+              <picture>
+            <source type="image/avif" srcset="assets/img/photos/philosophie-detail-360.avif 360w, assets/img/photos/philosophie-detail-640.avif 640w" sizes="(min-width: 62rem) 12rem, 9rem">
+            <img src="assets/img/photos/philosophie-detail-640.webp" srcset="assets/img/photos/philosophie-detail-360.webp 360w, assets/img/photos/philosophie-detail-640.webp 640w" sizes="(min-width: 62rem) 12rem, 9rem" width="640" height="838" alt="Vase en terre cuite et fleurs séchées dans un rayon de lumière" loading="lazy" decoding="async">
           </picture>
-                </figure>
-                <div class="carte__corps">
-                  <h3 class="sous-titre">Luminothérapie</h3>
-                  <p>La lumière comme soin. Un temps de pause pour le visage, les yeux fermés.</p>
-                  <a class="lien" href="#reserver" aria-label="Réserver la luminothérapie"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
-                </div>
-              </article>
-            </li>
-            <li>
-              <article class="carte" id="rituel-brossage" data-reveal="monte" style="--i: 2">
-                <figure class="photo carte__photo">
-                  <picture>
-            <source type="image/avif" srcset="assets/img/photos/rituel-brossage-480.avif 480w, assets/img/photos/rituel-brossage-800.avif 800w" sizes="(min-width: 62rem) 30vw, 82vw">
-            <img src="assets/img/photos/rituel-brossage-800.webp" srcset="assets/img/photos/rituel-brossage-480.webp 480w, assets/img/photos/rituel-brossage-800.webp 800w" sizes="(min-width: 62rem) 30vw, 82vw" width="800" height="1001" alt="Brosse en fibres naturelles et son ombre sur un mur terracotta" loading="lazy" decoding="async">
-          </picture>
-                </figure>
-                <div class="carte__corps">
-                  <h3 class="sous-titre">Brossage à sec</h3>
-                  <p>Un geste de préparation, tonique et doux à la fois, pour réveiller la peau.</p>
-                  <a class="lien" href="#reserver" aria-label="Réserver le brossage à sec"><span class="lien__texte">Réserver ce rituel</span> <svg class="btn__fleche" viewBox="0 0 18 10" aria-hidden="true" focusable="false"><path d="M0 5h16.5M12.5 1l4 4-4 4" fill="none" stroke="currentColor"/></svg></a>
-                </div>
-              </article>
-            </li>
-          </ul>
-          <div class="rituels__points" aria-hidden="true"><span data-actif></span><span></span><span></span></div>
+            </figure>
+          </div>
         </div>
       </section>
 
@@ -361,19 +335,21 @@
       </section>
     </main>
 
-    <!-- ══ 09 · Pied de page ════════════════════════════════════════════ -->
-    <footer class="pied ton-sombre fond-nuit" id="contact" data-tone="dark">
+    <!-- ══ 09 · Pied de page : la quatrième de couverture, en cuir ═══════ -->
+    <footer class="pied ton-sombre fond-cuir" id="contact" data-tone="dark">
+      <div class="cadre pied__couverture">
+        <img class="pied__gravure" src="assets/img/logo/peachy-mot-gravure.webp" width="2480" height="641" alt="Peachy — Lymphatic Therapy" loading="lazy" decoding="async">
+      </div>
+
       <div class="cadre pied__grille">
-        <div class="pied__marque">
-          <img class="pied__logo" src="assets/img/logo/peachy-logo-creme.svg" width="520" height="421" alt="Peachy — Lymphatic Therapy" loading="lazy" decoding="async">
-        </div>
+        <p class="pied__devise">L’art de prendre soin de soi</p>
 
         <nav aria-label="Pied de page">
           <h2 class="pied__titre">La maison</h2>
           <ul class="pied__liste">
-            <li><a href="#philosophie">La philosophie</a></li>
-            <li><a href="#drainage">Le drainage lymphatique</a></li>
             <li><a href="#rituels">Les rituels</a></li>
+            <li><a href="#drainage">Le drainage lymphatique</a></li>
+            <li><a href="#philosophie">La philosophie</a></li>
             <li><a href="#univers">L’univers</a></li>
           </ul>
         </nav>

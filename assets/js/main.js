@@ -75,12 +75,21 @@ function revelations() {
     setTimeout(() => poser(el), 2400);
   };
   // Un groupe (data-groupe) se révèle d'un seul geste : ses éléments entrent ensemble,
-  // décalés par --i, même hors champ (cartes du défilement horizontal sur mobile).
+  // décalés par --i, même hors champ.
   const groupes = $$("[data-groupe]");
-  const seuls = $$("[data-reveal]").filter((el) => !el.closest("[data-groupe]"));
+  let seuls = $$("[data-reveal]").filter((el) => !el.closest("[data-groupe]"));
   if (!("IntersectionObserver" in window)) {
     $$("[data-reveal]").forEach(voir);
     return;
+  }
+  // Un chapitre marqué data-entree dépasse sous la première page : s'il est à l'écran
+  // au chargement, son contenu entre à la suite du logo, sans attendre le défilement.
+  for (const chapitre of $$("[data-entree]")) {
+    if (chapitre.getBoundingClientRect().top >= window.innerHeight) continue;
+    const contenu = $$("[data-reveal]", chapitre);
+    contenu.forEach((el) => el.style.setProperty("--attente", "750ms"));
+    requestAnimationFrame(() => contenu.forEach(voir));
+    seuls = seuls.filter((el) => !contenu.includes(el));
   }
   const observateur = new IntersectionObserver(
     (entrees) => {
@@ -97,37 +106,51 @@ function revelations() {
   [...groupes, ...seuls].forEach((el) => observateur.observe(el));
 }
 
-/* ── Couverture et hero ──────────────────────────────────────────────────── */
+/* ── Première page : le logo doré ────────────────────────────────────────── */
 
-function couverture() {
+function accueil() {
   const racine = document.documentElement;
-  const page = $("#ouverture");
-  const hero = $("#accueil");
-  if (!("IntersectionObserver" in window)) {
-    racine.removeAttribute("data-couverture");
-    hero?.setAttribute("data-vu", "");
+  const logo = $(".hero__logo");
+  if (!logo || !("IntersectionObserver" in window)) {
+    racine.removeAttribute("data-accueil");
     return;
   }
-  // Tant que la couverture occupe l'écran, la barre et les chapitres restent en retrait.
-  if (page) {
-    new IntersectionObserver(([e]) => racine.toggleAttribute("data-couverture", e.isIntersecting), {
-      threshold: 0.55,
-    }).observe(page);
-  } else {
-    racine.removeAttribute("data-couverture");
-  }
-  // L'entrée du hero se joue quand il arrive à l'écran.
-  if (hero) {
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return;
-        hero.setAttribute("data-vu", "");
-        obs.disconnect();
-      },
-      { threshold: 0.3 },
-    );
-    obs.observe(hero);
-  }
+  // Tant que le grand logo est à l'écran, celui de la barre et les repères de
+  // chapitres restent en retrait.
+  const barre = $(".entete")?.offsetHeight || 72;
+  new IntersectionObserver(([e]) => racine.toggleAttribute("data-accueil", e.isIntersecting), {
+    rootMargin: "-" + barre + "px 0px 0px 0px",
+  }).observe(logo);
+
+  // La dorure accroche la lumière : au pointeur, un reflet suit le geste sur le logo.
+  const reflet = $(".dorure__reflet");
+  const hero = logo.closest("section");
+  const fin = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const calme = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (!reflet || !hero) return;
+  let cible = 0;
+  let position = 0;
+  let image = 0;
+  const suivre = () => {
+    position += (cible - position) * 0.08;
+    reflet.style.setProperty("--reflet-x", position.toFixed(2));
+    image = Math.abs(cible - position) > 0.05 ? requestAnimationFrame(suivre) : 0;
+  };
+  hero.addEventListener(
+    "pointermove",
+    (e) => {
+      if (!fin.matches || calme.matches || e.pointerType !== "mouse") return;
+      const cadre = logo.getBoundingClientRect();
+      // -31 : le reflet touche le bord gauche du logo ; +31 : le bord droit.
+      const t = Math.min(1.6, Math.max(-0.6, (e.clientX - cadre.left) / cadre.width));
+      cible = (t - 0.5) * 62;
+      if (!reflet.style.getPropertyValue("--reflet-o")) position = cible < 0 ? -85 : 85;
+      reflet.style.setProperty("--reflet-o", "0.5");
+      if (!image) image = requestAnimationFrame(suivre);
+    },
+    { passive: true },
+  );
+  hero.addEventListener("pointerleave", () => reflet.style.removeProperty("--reflet-o"));
 }
 
 /* ── Barre de navigation : ton, état compact, masquage au défilement ─────── */
@@ -259,7 +282,7 @@ function rituels() {
 }
 
 appliquerConfiguration();
-couverture();
+accueil();
 revelations();
 entete();
 chapitres();

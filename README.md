@@ -1,7 +1,8 @@
 # Peachy — Lymphatic Therapy
 
 Site de démonstration de Peachy, centre spécialisé dans le drainage lymphatique.
-Une page en chapitres plein écran, qui alterne deux univers : **Chocolat immersif** et **Crème éditoriale**.
+Une page en chapitres, qui s'ouvre sur le logo doré dans un papier terracotta, alterne deux univers
+(**Chocolat immersif** et **Crème éditoriale**) et se referme sur le nom gravé dans le cuir.
 
 Site statique : HTML, CSS et JavaScript natifs. Aucun framework, aucune dépendance, aucune étape de build.
 
@@ -18,36 +19,36 @@ Puis ouvrir http://localhost:4173. Le dossier se dépose tel quel chez n'importe
 
 | Chemin | Rôle |
 |---|---|
-| `index.html` | La page : la couverture, 8 chapitres et le pied de page |
+| `index.html` | La page : la première page, 7 chapitres et le pied de page |
 | `mentions-legales.html`, `confidentialite.html` | Pages de texte (champs à compléter, non indexées) |
 | `assets/css/tokens.css` | Variables de design : couleurs, matières, typographie, ombres, rayons, espacements, mouvement |
 | `assets/css/base.css` | Typographie, matières, boutons, cadres photo, barre de navigation, menu, chapitres |
 | `assets/css/sections.css` | Mise en page de chaque chapitre (mobile d'abord) |
-| `assets/css/motion.css` | Entrée du hero, révélations au défilement, mouvement réduit |
+| `assets/css/motion.css` | Entrée de la première page, révélations au défilement, mouvement réduit |
 | `assets/js/config.js` | **Réservation, coordonnées, Instagram, témoignages** : tout ce qui reste à fournir se règle ici |
 | `assets/js/main.js` | Navigation, menu, chapitres, révélations |
-| `assets/img/logo/` | Logo vectorisé : crème, chocolat, monochrome, symbole seul |
+| `assets/img/logo/` | Logo vectorisé d'après la maquette : complet (crème, chocolat, masque), pêche seule, nom, version pour petites tailles, nom gravé |
 | `assets/img/photos/` | Photos retouchées (AVIF + WebP, plusieurs largeurs) |
-| `assets/img/textures/` | Matières : papier, enduit, chocolat, lin, ombre de palme |
+| `assets/img/textures/` | Matières : papier terracotta, cuir, papier, enduit, chocolat, lin, ombre de palme |
 | `photos/originaux/` | Photos d'origine, jamais modifiées |
-| `tools/` | Chaîne de retouche et générateur de matières |
-| `prototypes/hero/` | Trois variantes du hero derrière un sélecteur |
+| `tools/` | Chaîne de retouche, générateurs de matières, vectorisation du logo |
+| `tools/sources/` | Maquettes du logo fournies par Peachy (papier, cuir), dont tout le reste découle |
 | `DESIGN.md` | Règles de design du projet |
 | `PRODUCT.md` | Contexte produit |
 | `CONTENU-A-COMPLETER.md` | Ce qui reste à fournir ou à valider |
 
 ## Le parcours
 
-0. **Couverture** : le logo gravé à blanc dans un papier terracotta, et rien d'autre.
-1. **Hero** (chocolat) : la photo du soin, « L'art de prendre soin de soi », deux actions.
-2. **La philosophie** (crème) : composition éditoriale, portrait en arche, ombre végétale.
-3. **Le drainage lymphatique** (chocolat) : photo pleine hauteur, principe, approche, séance, sensations.
-4. **Les rituels** (crème) : trois cartes ; défilement horizontal tactile sur mobile.
+1. **Première page** (papier terracotta) : le logo doré, « L'art de prendre soin de soi », « Réserver un soin ».
+   Le haut des rituels dépasse en bas de l'écran.
+2. **Les rituels** (crème) : le titre et trois photos sous voûte ; défilement horizontal tactile sur mobile.
+3. **Le drainage lymphatique** (chocolat) : la photo du soin en pleine hauteur, principe, approche, séance, sensations.
+4. **La philosophie** (crème) : composition éditoriale, portrait en arche, ombre végétale. C'est le « À propos » de la barre.
 5. **Le geste** (chocolat) : « Chaque geste a son intention. »
 6. **L'univers Peachy** (crème) : galerie éditoriale du lieu.
 7. **L'expérience** (beige minéral) : structure prête pour de vrais témoignages.
 8. **Réserver** (chocolat profond) : « Un moment rien qu'à vous. »
-9. **Pied de page** : logo, navigation, Instagram, mentions.
+9. **Pied de page** (cuir) : le nom gravé à blanc, navigation, Instagram, mentions.
 
 ## Brancher la réservation et les coordonnées
 
@@ -86,17 +87,28 @@ Les matières se régénèrent avec :
 python3 tools/textures.py
 ```
 
-Le papier de la couverture et la gravure du logo (calculés avec la même lumière) :
+Le papier de la première page, le cuir du pied de page et la gravure du nom, tirés des maquettes de `tools/sources` :
 
 ```bash
 python3 tools/couverture.py
 ```
 
-## Prototypes du hero
+## Logo
 
-`prototypes/hero/index.html` présente trois directions du premier écran : **Diptyque** (retenue par défaut,
-photo entière et nette), **Plein cadre** (photo sur tout l'écran, recadrage serré) et **Arche** (crème éditoriale).
-Touches `1` à `3` ou flèches pour changer, `R` pour rejouer l'entrée. Le dossier se supprime une fois le choix fait.
+Le logo est tracé d'après la maquette `tools/sources/maquette-papier.jpg`. Pour le régénérer
+(Node, puis `npm install` une fois dans `tools/`) :
+
+```bash
+python3 tools/logo.py
+```
+
+```bash
+node tools/logo.mjs
+```
+
+La première commande isole le logo de la maquette, la seconde le vectorise et écrit les fichiers de `assets/img/logo`
+et `favicon.svg`. Le sous-titre est composé en Montserrat (licence OFL, dans `tools/sources`).
+Le masque de la gravure (`tools/sources/masque-mot.png`) est un rendu noir sur blanc de `peachy-mot.svg`, en 2400 px de large.
 
 ## Skills de design
 

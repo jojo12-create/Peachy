@@ -14,7 +14,7 @@ html {
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   scroll-padding-top: 0;
-  background: var(--chocolat);
+  background: var(--papier);   /* la page s'ouvre sur le papier et se referme sur le cuir */
   color-scheme: only light;
 }
 
@@ -116,6 +116,7 @@ button,
 
 html {
   scrollbar-color: var(--taupe) var(--chocolat);
+  caret-color: var(--terracotta);
 }
 
 .lien-evitement {
@@ -147,17 +148,12 @@ html {
 /* ── Typographie ─────────────────────────────────────────────────────────── */
 
 .titre,
-.titre-hero,
 .phrase {
   font-family: var(--serif);
   font-weight: 400;
   line-height: var(--interligne-titre);
   letter-spacing: -0.012em;
   text-wrap: balance;
-}
-
-.titre-hero {
-  font-size: var(--t-display);
 }
 
 .titre {
@@ -170,8 +166,7 @@ html {
   line-height: 1.04;
 }
 
-.titre em,
-.titre-hero em {
+.titre em {
   font-style: italic;
 }
 
@@ -274,6 +269,17 @@ html {
   background-color: var(--sable);
   background-image: var(--matiere-enduit);
   background-size: 512px;
+}
+
+/* Cuir grainé de la quatrième de couverture : éclairé au centre, plus dense sur les bords. */
+.fond-cuir {
+  --lumiere-douce: var(--creme);   /* ≥ 5:1 sur le cuir */
+  background-color: var(--cuir);
+  background-image:
+    radial-gradient(90% 26rem at 50% 11rem, rgb(255 214 172 / 0.1), rgb(255 214 172 / 0) 70%),
+    radial-gradient(140% 120% at 50% 36%, rgb(29 16 10 / 0) 46%, rgb(29 16 10 / 0.36) 100%),
+    var(--matiere-cuir);
+  background-size: auto, auto, 540px;
 }
 
 /* Ombre végétale projetée sur un fond clair. */
@@ -501,12 +507,6 @@ html {
   transform: translateY(-110%);
 }
 
-/* Sur la couverture, rien d'autre que le logo gravé : la barre attend hors champ
-   (elle revient au clavier dès qu'un de ses liens reçoit le focus). */
-html[data-couverture] .entete:not(:focus-within) {
-  transform: translateY(-110%);
-}
-
 .entete__interieur {
   height: var(--entete);
   display: flex;
@@ -515,31 +515,33 @@ html[data-couverture] .entete:not(:focus-within) {
   gap: var(--e-3);
 }
 
+/* Le logo de la barre : nom et sous-titre, à la couleur du texte. */
 .marque {
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
   min-height: 2.75rem;
-  justify-content: center;
-  line-height: 1;
+  transition:
+    opacity var(--d-interface) ease,
+    visibility 0s;
 }
 
-.marque__nom {
-  font-family: var(--serif);
-  font-size: 1.1875rem;
-  letter-spacing: 0.42em;
-  margin-right: -0.42em;
-  text-transform: uppercase;
+.marque__logo {
+  display: block;
+  width: 7.5rem;
+  aspect-ratio: 459 / 108;
+  background: currentColor;
+  -webkit-mask: url("../img/logo/peachy-marque.svg") center / contain no-repeat;
+  mask: url("../img/logo/peachy-marque.svg") center / contain no-repeat;
 }
 
-.marque__sous {
-  font-size: 0.5625rem;
-  font-weight: 500;
-  letter-spacing: 0.4em;
-  margin-right: -0.4em;
-  text-transform: uppercase;
-  opacity: 0.82;
+/* Sur la première page, le grand logo est déjà là : celui de la barre attend
+   qu'il soit sorti de l'écran. Le menu ouvert le fait revenir. */
+html[data-accueil]:not([data-menu]) .marque {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--d-interface) ease,
+    visibility 0s linear var(--d-interface);
 }
 
 .nav {
@@ -643,8 +645,21 @@ html[data-couverture] .entete:not(:focus-within) {
 }
 
 @media (min-width: 62rem) {
+  /* Trois colonnes : la navigation reste au centre exact de la barre. */
+  .entete__interieur {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+  .entete__interieur > :first-child {
+    justify-self: start;
+  }
+  .entete__interieur > :last-child {
+    grid-column: 3;
+    justify-self: end;
+  }
   .nav {
     display: block;
+    grid-column: 2;
   }
   .entete__reserver {
     padding-inline: 1.25rem;
@@ -779,7 +794,8 @@ html[data-menu] {
       visibility 0s;
   }
 
-  html[data-couverture] .chapitres:not(:focus-within) {
+  /* Sur la première page, les repères de chapitres restent en retrait. */
+  html[data-accueil] .chapitres:not(:focus-within) {
     opacity: 0;
     visibility: hidden;
     transition:

@@ -9,80 +9,44 @@
    - prefers-reduced-motion : plus de déplacement, un simple fondu.
    ========================================================================== */
 
-/* ── Couverture : la gravure se presse dans le papier, une fois ──────────── */
+/* ── Première page : la dorure se pose, puis la lumière la traverse ───────── */
+/* Un seul mouvement, au chargement : le logo apparaît, un reflet le parcourt une
+   fois, puis le filet, la devise et le bouton suivent. Le haut des rituels entre
+   en dernier (voir data-entree dans main.js). Rien ne bloque le clic. */
 
 @media (prefers-reduced-motion: no-preference) {
-  .js .couverture__gravure {
-    animation: gravure 1900ms var(--ease-out) 250ms both;
+  .js .hero__logo {
+    animation: dorure 1600ms var(--ease-out) 150ms both;
   }
-  .js .couverture__suite {
-    animation: fondu 900ms ease 1700ms both;
-  }
-  .js .couverture__suite span::after {
-    animation: suite 2400ms var(--ease-in-out) 2600ms 3;
-  }
-}
-
-@keyframes gravure {
-  from {
-    opacity: 0;
-  }
-}
-
-/* ── Entrée du hero, une seule fois, quand il arrive à l'écran ───────────── */
-
-.ligne {
-  display: block;
-  overflow: hidden;
-  /* laisse passer les jambages et l'italique sous le masque */
-  padding: 0 0.08em 0.14em;
-  margin: 0 -0.08em -0.14em;
-}
-
-.ligne__texte {
-  display: block;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .js .hero__media {
-    animation: hero-photo 2600ms var(--ease-out) both;
-  }
-  .js .hero .ligne__texte {
-    animation: hero-ligne 1100ms var(--ease-out) both;
-    animation-delay: calc(220ms + var(--i, 0) * 110ms);
+  .js .dorure__reflet {
+    animation: reflet 2400ms var(--ease-in-out) 700ms backwards;
   }
   .js .hero .filet {
-    animation: trait 800ms var(--ease-out) 640ms both;
+    animation: trait 900ms var(--ease-out) 900ms both;
   }
-  .js .hero .chapo {
-    animation: monte 900ms var(--ease-out) 600ms both;
+  .js .hero__devise {
+    animation: monte 1000ms var(--ease-out) 1000ms both;
   }
   .js .hero__actions {
-    animation: monte-leger 900ms var(--ease-out) 720ms both;
-  }
-  .js .hero__suite {
-    animation: fondu 800ms ease 1300ms both;
-  }
-  /* Tant que le hero n'est pas à l'écran, son entrée attend sur sa première image. */
-  .js .hero:not([data-vu]) :is(.hero__media, .ligne__texte, .filet, .chapo, .hero__actions, .hero__suite),
-  .js .hero:not([data-vu]) .hero__suite-trait::after {
-    animation-play-state: paused;
-  }
-  /* Invitation à défiler : trois passages, puis le trait se repose. */
-  .js .hero__suite-trait::after {
-    animation: suite 2400ms var(--ease-in-out) 2200ms 3;
+    animation: monte-leger 1000ms var(--ease-out) 1180ms both;
   }
 }
 
-@keyframes hero-photo {
+@keyframes dorure {
   from {
-    transform: scale(1.07);
+    opacity: 0;
+    transform: scale(1.025);
   }
 }
 
-@keyframes hero-ligne {
+@keyframes reflet {
   from {
-    transform: translateY(105%);
+    opacity: 1;
+    transform: translateX(-85%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(85%);
   }
 }
 
@@ -112,32 +76,6 @@
   }
 }
 
-@keyframes suite {
-  0% {
-    transform: translateY(-100%);
-  }
-  55%,
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-@keyframes suite-horizontale {
-  0% {
-    transform: translateX(-100%);
-  }
-  55%,
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@media (min-width: 62rem) and (orientation: landscape) {
-  .js .hero__suite-trait::after {
-    animation-name: suite-horizontale;
-  }
-}
-
 /* ── Révélations au défilement ───────────────────────────────────────────── */
 /* data-reveal="monte"  : texte, fondu + légère montée
    data-reveal="fondu"  : éléments décoratifs, fondu seul
@@ -146,7 +84,7 @@
    --i                  : rang dans le groupe (décalage dégressif)            */
 
 .js [data-reveal] {
-  --delai: calc(var(--pas) * var(--i, 0) * (1 - var(--i, 0) * 0.07));
+  --delai: calc(var(--attente, 0ms) + var(--pas) * var(--i, 0) * (1 - var(--i, 0) * 0.07));
 }
 
 /* Les transitions de révélation ne vivent que le temps de l'entrée : le script pose
@@ -203,8 +141,8 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    /* La photo du hero dérive très légèrement quand on quitte le premier écran. */
-    .hero__media img {
+    /* Le logo s'enfonce très légèrement dans le papier quand on quitte la première page. */
+    .hero__contenu {
       animation: derive linear both;
       animation-timeline: view(block);
       animation-range: exit 0% exit 100%;
@@ -228,7 +166,8 @@
 
 @keyframes derive {
   to {
-    transform: translateY(6%) scale(1.03);
+    transform: translateY(2.5rem);
+    opacity: 0.55;
   }
 }
 
@@ -279,13 +218,15 @@
   .entete,
   .btn,
   .btn__fleche,
-  .carte,
-  .carte__photo img {
+  .rituel__photo img {
     transition-duration: 1ms;
   }
-  .carte:hover,
   .btn:hover,
-  .carte:hover .carte__photo img {
+  .rituel:hover .rituel__photo img,
+  .rituel:active .rituel__photo img {
     transform: none;
+  }
+  .dorure__reflet {
+    display: none;
   }
 }
