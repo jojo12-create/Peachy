@@ -74,6 +74,18 @@ Jamais à un effet.
 - Une photo n'apparaît qu'une fois sur la page. Aucune légende sous une image.
 - Une photo n'est jamais affichée au-delà de ce que sa définition permet : on réduit le cadre plutôt que d'agrandir un flou.
 
+## Couverture
+
+- **La première page n'est que le logo, gravé dans le papier.** Ni titre, ni bouton, ni barre de navigation :
+  la barre et les chapitres n'apparaissent qu'en quittant la couverture. Seul un trait discret invite à descendre.
+  <!-- 2026-11-18 : « La première page je veux juste ça. » -->
+- **Le logo de la couverture est de la couleur du fond, gravé à blanc** (débossage) : aucune encre, aucune dorure.
+  Il n'existe que par l'ombre et la lumière du creux.
+  <!-- 2026-11-18 : « Retravaille pour que même le logo soit de la couleur du fond mais en gravé comme dans du papier » -->
+- **Le papier** est un terracotta feutré (`--papier`), à fibres visibles et rares inclusions, éclairé du haut à gauche.
+  Papier et gravure partagent la même lumière : ils sortent tous deux de `tools/couverture.py`.
+  <!-- 2026-11-18 : « Travaille la texture pour que ça soit comme sur les moods donnés, pareil pour la DA et la gravure » -->
+
 ## Mise en page
 
 - Une suite de **chapitres plein écran** (`min-height: 100svh`). Un contenu long peut dépasser la hauteur d'un écran.
@@ -88,7 +100,8 @@ Jamais à un effet.
 
 - Courbes : `--ease-out` (entrées, sorties, survols) et `--ease-in-out` (déplacements). Jamais `ease-in`, jamais `transition: all`.
 - Propriétés animées : `transform`, `opacity`, `clip-path`. Jamais `width`, `height`, `margin`, `top`, `left`.
-- **Hero** : une entrée au chargement (titre ligne à ligne, puis filet, texte, boutons). Rien ne bloque le clic.
+- **Couverture** : la gravure apparaît lentement au chargement, comme pressée dans le papier.
+- **Hero** : une entrée quand il arrive à l'écran (titre ligne à ligne, puis filet, texte, boutons). Rien ne bloque le clic.
 - **Révélations** (`data-reveal`) : `monte` pour le texte, `photo` pour les images (masque de bas en haut), `trait` pour les filets.
   Une seule fois, décalages courts et dégressifs (`--pas`, `--i`). Le contenu est visible sans JavaScript.
 - **Liés au défilement** : dérive du hero, cadrage du geste, glissement du détail. En CSS (`animation-timeline`), amplitude minime.

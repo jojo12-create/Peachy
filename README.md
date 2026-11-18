@@ -18,7 +18,7 @@ Puis ouvrir http://localhost:4173. Le dossier se dépose tel quel chez n'importe
 
 | Chemin | Rôle |
 |---|---|
-| `index.html` | La page : 8 chapitres et le pied de page |
+| `index.html` | La page : la couverture, 8 chapitres et le pied de page |
 | `mentions-legales.html`, `confidentialite.html` | Pages de texte (champs à compléter, non indexées) |
 | `assets/css/tokens.css` | Variables de design : couleurs, matières, typographie, ombres, rayons, espacements, mouvement |
 | `assets/css/base.css` | Typographie, matières, boutons, cadres photo, barre de navigation, menu, chapitres |
@@ -38,6 +38,7 @@ Puis ouvrir http://localhost:4173. Le dossier se dépose tel quel chez n'importe
 
 ## Le parcours
 
+0. **Couverture** : le logo gravé à blanc dans un papier terracotta, et rien d'autre.
 1. **Hero** (chocolat) : la photo du soin, « L'art de prendre soin de soi », deux actions.
 2. **La philosophie** (crème) : composition éditoriale, portrait en arche, ombre végétale.
 3. **Le drainage lymphatique** (chocolat) : photo pleine hauteur, principe, approche, séance, sensations.
@@ -83,6 +84,12 @@ Les matières se régénèrent avec :
 
 ```bash
 python3 tools/textures.py
+```
+
+Le papier de la couverture et la gravure du logo (calculés avec la même lumière) :
+
+```bash
+python3 tools/couverture.py
 ```
 
 ## Prototypes du hero

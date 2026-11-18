@@ -49,6 +49,7 @@
   --chocolat: #28170f;           /* chocolat profond */
   --cacao: #4a281a;              /* brun cacao */
   --terracotta: #975d3e;
+  --papier: #7a462b;             /* papier terracotta de la couverture */
   --taupe: #b3947f;              /* taupe chaud */
   --sable: #d5bba4;              /* beige sable */
   --creme: #ead9c6;
@@ -68,6 +69,7 @@
   --matiere-chocolat: url("../img/textures/chocolat.webp");
   --matiere-lin: url("../img/textures/lin.webp");
   --matiere-ombre: url("../img/textures/ombre-palme.webp");
+  --matiere-papier-terracotta: url("../img/textures/papier-terracotta.webp");
 
   /* ── Typographie ───────────────────────────────────────────────────────── */
   --serif: "Playfair Display", "Playfair Repli", Georgia, "Times New Roman", serif;

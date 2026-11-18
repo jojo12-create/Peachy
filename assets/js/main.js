@@ -97,6 +97,39 @@ function revelations() {
   [...groupes, ...seuls].forEach((el) => observateur.observe(el));
 }
 
+/* ── Couverture et hero ──────────────────────────────────────────────────── */
+
+function couverture() {
+  const racine = document.documentElement;
+  const page = $("#ouverture");
+  const hero = $("#accueil");
+  if (!("IntersectionObserver" in window)) {
+    racine.removeAttribute("data-couverture");
+    hero?.setAttribute("data-vu", "");
+    return;
+  }
+  // Tant que la couverture occupe l'écran, la barre et les chapitres restent en retrait.
+  if (page) {
+    new IntersectionObserver(([e]) => racine.toggleAttribute("data-couverture", e.isIntersecting), {
+      threshold: 0.55,
+    }).observe(page);
+  } else {
+    racine.removeAttribute("data-couverture");
+  }
+  // L'entrée du hero se joue quand il arrive à l'écran.
+  if (hero) {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        hero.setAttribute("data-vu", "");
+        obs.disconnect();
+      },
+      { threshold: 0.3 },
+    );
+    obs.observe(hero);
+  }
+}
+
 /* ── Barre de navigation : ton, état compact, masquage au défilement ─────── */
 
 function entete() {
@@ -109,7 +142,10 @@ function entete() {
     enAttente = false;
     const y = window.scrollY;
     barre.toggleAttribute("data-scrolled", y > 24);
-    const descend = y > dernierY && y > 160;
+    // La barre reste présente sur le hero ; elle ne s'efface en descendant qu'ensuite.
+    const hero = $("#accueil");
+    const seuil = hero ? hero.offsetTop + hero.offsetHeight * 0.6 : 160;
+    const descend = y > dernierY && y > seuil;
     if (Math.abs(y - dernierY) > 6) {
       barre.toggleAttribute("data-hidden", descend && !document.documentElement.hasAttribute("data-menu"));
       dernierY = y;
@@ -223,6 +259,7 @@ function rituels() {
 }
 
 appliquerConfiguration();
+couverture();
 revelations();
 entete();
 chapitres();

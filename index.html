@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Peachy — Lymphatic Therapy · Drainage lymphatique et rituels de soin</title>
     <meta name="description" content="Peachy, maison de soin dédiée au drainage lymphatique. Des gestes lents et précis, une lumière douce, un lieu pensé pour ralentir. Réservez votre soin.">
-    <meta name="theme-color" content="#28170f">
+    <meta name="theme-color" content="#7a462b">
     <meta name="color-scheme" content="only light">
     <meta name="format-detection" content="telephone=no">
 
@@ -26,14 +26,15 @@
 
     <link rel="preload" href="assets/fonts/playfair-display-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" as="image" type="image/avif" imagesrcset="assets/img/photos/hero-640.avif 640w, assets/img/photos/hero-1125.avif 1125w, assets/img/photos/hero-1528.avif 1528w" imagesizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw" fetchpriority="high">
+    <link rel="preload" as="image" type="image/webp" href="assets/img/logo/peachy-gravure.webp" fetchpriority="high">
+    <link rel="preload" as="image" type="image/webp" href="assets/img/textures/papier-terracotta.webp">
 
     <link rel="stylesheet" href="assets/css/tokens.css">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/sections.css">
     <link rel="stylesheet" href="assets/css/motion.css">
 
-    <script>document.documentElement.classList.add("js");</script>
+    <script>document.documentElement.classList.add("js");if(scrollY<innerHeight/2)document.documentElement.setAttribute("data-couverture","");</script>
     <script type="module" src="assets/js/main.js"></script>
 
     <script type="application/ld+json">
@@ -106,22 +107,29 @@
     </nav>
 
     <main id="contenu">
+      <!-- ══ Couverture : le logo gravé dans le papier ══════════════════ -->
+      <section class="couverture" id="ouverture" data-tone="dark">
+        <h1 class="sr">Peachy — Lymphatic Therapy</h1>
+        <img class="couverture__gravure" src="assets/img/logo/peachy-gravure.webp" width="1380" height="1133" alt="" fetchpriority="high" decoding="async">
+        <a class="couverture__suite" href="#accueil" aria-label="Entrer sur le site"><span aria-hidden="true"></span></a>
+      </section>
+
       <!-- ══ 01 · Hero immersif ═════════════════════════════════════════ -->
       <section class="section hero ton-sombre fond-chocolat" id="accueil" data-tone="dark">
         <div class="ombre-vegetale ombre-vegetale--gauche" aria-hidden="true"></div>
         <div class="hero__media">
           <picture>
             <source type="image/avif" srcset="assets/img/photos/hero-640.avif 640w, assets/img/photos/hero-1125.avif 1125w, assets/img/photos/hero-1528.avif 1528w" sizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw">
-            <img src="assets/img/photos/hero-1528.webp" srcset="assets/img/photos/hero-640.webp 640w, assets/img/photos/hero-1125.webp 1125w, assets/img/photos/hero-1528.webp 1528w" sizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw" width="1528" height="2044" alt="Deux mains posées sur un dos huilé, pendant un soin chez Peachy" fetchpriority="high" decoding="async">
+            <img src="assets/img/photos/hero-1528.webp" srcset="assets/img/photos/hero-640.webp 640w, assets/img/photos/hero-1125.webp 1125w, assets/img/photos/hero-1528.webp 1528w" sizes="(min-width: 62rem) and (orientation: landscape) min(52vw, 92vh), 100vw" width="1528" height="2044" alt="Deux mains posées sur un dos huilé, pendant un soin chez Peachy" loading="lazy" decoding="async">
           </picture>
         </div>
         <div class="hero__voile" aria-hidden="true"></div>
 
         <div class="cadre hero__contenu">
-          <h1 class="titre-hero">
+          <h2 class="titre-hero">
             <span class="ligne" style="--i: 0"><span class="ligne__texte">L’art de prendre</span></span>
             <span class="ligne" style="--i: 1"><span class="ligne__texte">soin de soi</span></span>
-          </h1>
+          </h2>
           <hr class="filet">
           <p class="chapo">Un lieu dédié au drainage lymphatique, où chaque séance devient un temps de calme, de chaleur et d’attention.</p>
           <div class="hero__actions">

@@ -3,6 +3,67 @@
    Mobile d'abord ; les compositions éditoriales arrivent à partir de 62rem.
    ========================================================================== */
 
+/* ── Couverture : le logo gravé dans le papier, et rien d'autre ──────────── */
+/* Le logo n'a pas de couleur : c'est le papier lui-même, pressé. La matière est
+   une tuile sans couture ; deux halos très légers lui donnent une lumière qui ne
+   se répète pas. */
+
+.couverture {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 4.5rem var(--gouttiere);
+  overflow: clip;
+  background-color: var(--papier);
+  background-image:
+    radial-gradient(110% 80% at 28% 18%, rgb(255 214 172 / 0.08), rgb(255 214 172 / 0) 62%),
+    radial-gradient(130% 120% at 50% 50%, rgb(29 16 10 / 0) 52%, rgb(29 16 10 / 0.26) 100%),
+    var(--matiere-papier-terracotta);
+  background-size: auto, auto, 512px;
+}
+
+.couverture__gravure {
+  width: min(76vw, 34rem, 66svh);
+  height: auto;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.couverture__suite {
+  position: absolute;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  width: 2.75rem;
+  height: 3.5rem;
+  display: grid;
+  place-items: center;
+  translate: -50% 0;
+}
+
+/* Un simple trait, gravé lui aussi : ombre à gauche, lumière à droite. */
+.couverture__suite span {
+  position: relative;
+  width: 1px;
+  height: 2.25rem;
+  background: rgb(44 20 9 / 0.5);
+  box-shadow: 1px 0 0 rgb(255 214 172 / 0.16);
+  overflow: hidden;
+}
+
+.couverture__suite span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(255 214 172 / 0.55);
+  transform: translateY(-100%);
+}
+
+.couverture__suite:focus-visible {
+  outline-color: var(--creme);
+}
+
 /* ── 01 · Hero immersif (chocolat) ───────────────────────────────────────── */
 
 .hero {

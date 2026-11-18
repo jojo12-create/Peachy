@@ -9,7 +9,27 @@
    - prefers-reduced-motion : plus de déplacement, un simple fondu.
    ========================================================================== */
 
-/* ── Entrée du hero, une seule fois au chargement ────────────────────────── */
+/* ── Couverture : la gravure se presse dans le papier, une fois ──────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .couverture__gravure {
+    animation: gravure 1900ms var(--ease-out) 250ms both;
+  }
+  .js .couverture__suite {
+    animation: fondu 900ms ease 1700ms both;
+  }
+  .js .couverture__suite span::after {
+    animation: suite 2400ms var(--ease-in-out) 2600ms 3;
+  }
+}
+
+@keyframes gravure {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ── Entrée du hero, une seule fois, quand il arrive à l'écran ───────────── */
 
 .ligne {
   display: block;
@@ -40,12 +60,13 @@
   .js .hero__actions {
     animation: monte-leger 900ms var(--ease-out) 720ms both;
   }
-  .js .hero__suite,
-  .js .entete__interieur {
-    animation: fondu 800ms ease 120ms both;
-  }
   .js .hero__suite {
-    animation-delay: 1300ms;
+    animation: fondu 800ms ease 1300ms both;
+  }
+  /* Tant que le hero n'est pas à l'écran, son entrée attend sur sa première image. */
+  .js .hero:not([data-vu]) :is(.hero__media, .ligne__texte, .filet, .chapo, .hero__actions, .hero__suite),
+  .js .hero:not([data-vu]) .hero__suite-trait::after {
+    animation-play-state: paused;
   }
   /* Invitation à défiler : trois passages, puis le trait se repose. */
   .js .hero__suite-trait::after {
@@ -185,8 +206,8 @@
     /* La photo du hero dérive très légèrement quand on quitte le premier écran. */
     .hero__media img {
       animation: derive linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0 100svh;
+      animation-timeline: view(block);
+      animation-range: exit 0% exit 100%;
     }
 
     /* Le geste : le cadrage se resserre doucement pendant la traversée. */

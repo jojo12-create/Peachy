@@ -501,6 +501,12 @@ html {
   transform: translateY(-110%);
 }
 
+/* Sur la couverture, rien d'autre que le logo gravé : la barre attend hors champ
+   (elle revient au clavier dès qu'un de ses liens reçoit le focus). */
+html[data-couverture] .entete:not(:focus-within) {
+  transform: translateY(-110%);
+}
+
 .entete__interieur {
   height: var(--entete);
   display: flex;
@@ -767,7 +773,18 @@ html[data-menu] {
     align-items: flex-end;
     transform: translateY(-50%);
     color: var(--lumiere);
-    transition: color var(--d-survol) ease;
+    transition:
+      color var(--d-survol) ease,
+      opacity var(--d-interface) ease,
+      visibility 0s;
+  }
+
+  html[data-couverture] .chapitres:not(:focus-within) {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--d-interface) ease,
+      visibility 0s linear var(--d-interface);
   }
 
   .chapitres[data-tone="light"] {
