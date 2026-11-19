@@ -2,15 +2,15 @@
  * Peachy — la serviette brodée (couverture de la page).
  *
  * 1. La serviette se dépose : elle arrive floue et lisse, ses plis se forment, puis tout s'arrête.
- * 2. La caméra s'approche et la broderie se coud : plusieurs aiguilles travaillent en même temps,
- *    par morceaux, point après point. Leur fil sort de la serviette en petits arcs, d'un point
- *    au suivant. La caméra va d'un ouvrage à l'autre.
+ * 2. La caméra s'approche et la broderie apparaît : de longues lanières douces, éparses, glissent
+ *    le long de chaque ligne et la dévoilent par endroits, puis en entier. Une lueur les accompagne.
+ *    La caméra va d'un ouvrage à l'autre.
  * 3. La caméra recule : la serviette entière, la bande tissée en bas de l'écran.
  *
  * Le fil brodé est celui de la photographie. Chaque mot est une pièce : sur un écran large elle
- * reste à sa place ; sur un téléphone, les mots s'empilent sur toute la hauteur, et chaque pièce
- * prend la lumière et l'ondulation des plis où elle se pose. Seuls l'ordre des points et le trajet
- * des aiguilles sont calculés (tools/serviette.py).
+ * reste à sa place ; sur un écran en hauteur, les mots s'empilent sur toute la hauteur, et chaque
+ * pièce prend la lumière et l'ondulation des plis où elle se pose. Seul l'instant où chaque
+ * lanière passe est calculé (tools/serviette.py).
  * Sans WebGL 2 ou sans script, l'image brodée s'affiche telle quelle.
  */
 import { serviette as D } from "./serviette-donnees.js";
@@ -45,7 +45,8 @@ uniform vec3 uMarges;        // prolongement haut, bas, côtés
 uniform vec3 uMoyenne;       // teinte moyenne de la serviette
 uniform float uPose;         // 0 → 1 : la serviette se dépose
 uniform float uFil;          // 0 → 1 : avancée de la couture
-uniform float uDuree;        // durée de la couture, en secondes
+uniform float uDuree;        // durée de l'apparition, en secondes
+uniform float uDouceur;      // fondu de la pointe d'une lanière, en secondes
 uniform vec4 uSurvol;        // centre et demi-côtés du groupe survolé
 uniform vec2 uSurvolAngle;   // cos, sin de son inclinaison
 uniform float uSurvolForce;
@@ -98,8 +99,8 @@ void main() {
   // ── La couture : la carte dit à quel instant chaque point de broderie est posé ──
   if (uFil > 0.0) {
     ivec2 limite = ivec2(uTaille) - 1;
-    float net = 0.022 / uDuree;
-    float cousu = 0.0, frais = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0;
+    float net = uDouceur / uDuree;
+    float cousu = 0.0, frais = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0, lueur = 0.0;
     vec2 ou = vec2(0.0);
     // une pièce déplacée épouse les plis où elle se pose
     vec2 ondule = p + pente * 650.0;
@@ -111,7 +112,7 @@ void main() {
       vec2 t = q - 0.5;
       vec2 f = fract(t);
       ivec2 i = ivec2(floor(t));
-      float c1 = 0.0, f1 = 0.0, a1 = 0.0;
+      float c1 = 0.0, f1 = 0.0, a1 = 0.0, l1 = 0.0;
       for (int k = 0; k < 4; k++) {
         ivec2 o = ivec2(k & 1, k >> 1);
         ivec2 xy = clamp(i + o, ivec2(0), limite);
@@ -124,13 +125,18 @@ void main() {
         float emprise = mix(m.b, smoothstep(0.3, 0.92, m.b), bouge);
         float pose_ = smoothstep(instant, instant + net, uFil) * emprise;
         c1 += poids * pose_;
-        f1 += poids * pose_ * exp(-(uFil - instant) * uDuree / 0.7);
-        a1 += poids * fract(sin(instant * 9173.0) * 43758.5);
+        // le fil reste un instant plus clair après le passage de la lanière
+        f1 += poids * pose_ * exp(-max(0.0, uFil - instant - net) * uDuree / 0.9);
+        // la lueur de la lanière : elle précède à peine le fil, puis s'éteint
+        float passe = (uFil - instant) * uDuree;
+        l1 += poids * m.b * exp(-passe * passe / (passe < 0.0 ? 0.012 : 0.09)) * step(0.0005, instant);
+        a1 += poids * fract(sin(float(xy.x) * 12.9898 + float(xy.y) * 78.233) * 43758.5);
       }
       // fondu sur les bords de la boîte : une pièce coupée court ne laisse pas d'arête
       vec2 dBord = min(q - uBoite[n].xy, uBoite[n].zw - q);
       float doux = smoothstep(0.0, 4.0, min(dBord.x, dBord.y));
       c1 *= doux; f1 *= doux;
+      lueur = max(lueur, l1 * doux);
       if (c1 > cousu) {
         cousu = c1; frais = f1; alea = a1 - 0.5; ou = q; deplace = bouge;
         grossi = length(uMat[n].xy);
@@ -145,13 +151,11 @@ void main() {
       brodee *= mix(vec3(1.0), plis / max(texture(uPlis, versPlis(ou)).rgb, vec3(0.05)), deplace);
       c = mix(c, brodee, cousu);
 
-      // Les points : chaque piqûre laisse une petite barre de fil, bombée, avec un creux entre deux.
-      // Le relief est appuyé sur le fil qui vient d'être posé, puis il se tasse sans disparaître.
+      // Les points de broderie : de petites barres de fil bombées, un creux entre deux.
       float bombe = texture(uPoints, uq).r * 2.0 - 1.0;   // +1 au milieu du point, −1 dans le creux
-      float relief = 0.11 + 0.30 * frais;
-      c *= 1.0 + fil * (bombe * relief + alea * 0.10);
-      // le fil fraîchement posé accroche la lumière
-      c += vec3(0.20, 0.14, 0.09) * fil * frais * (0.55 + 0.45 * bombe);
+      c *= 1.0 + fil * (bombe * 0.11 + alea * 0.06);
+      // le fil qui vient d'apparaître est un peu plus clair, puis prend sa teinte
+      c += vec3(0.10, 0.07, 0.045) * fil * frais;
 
       // survol d'une catégorie : son fil fonce légèrement
       vec2 r = p - uSurvol.xy;
@@ -159,6 +163,8 @@ void main() {
       float dedans = step(abs(r.x), uSurvol.z) * step(abs(r.y), uSurvol.w);
       c = mix(c, c * vec3(0.78, 0.72, 0.68), fil * dedans * uSurvolForce);
     }
+    // La lanière elle-même : une lumière douce qui effleure l'éponge là où elle passe.
+    c += vec3(0.062, 0.051, 0.041) * lueur;
   }
 
   // ── Lumière : lisse et claire en l'air, les plis se creusent en se posant ──
@@ -173,7 +179,6 @@ void main() {
 const borner = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const melanger = (a, b, k) => a + (b - a) * k;
 const adoucir = (x) => x * x * (3 - 2 * x);
-const sortir = (x) => 1 - (1 - x) * (1 - x) * (1 - x); // sortie douce
 
 // Courbe des mouvements de caméra : une entrée et une sortie douces (easeInOutSine,
 // cubic-bezier(0.37, 0, 0.63, 1)). Tout l'écran bouge : la courbe des déplacements de
@@ -208,7 +213,6 @@ function charger(nom) {
 export function serviette() {
   const section = document.querySelector(".serviette");
   const toile = section?.querySelector(".serviette__toile");
-  const calque = section?.querySelector(".serviette__fils");
   if (!section || !toile) return;
 
   const gl = toile.getContext("webgl2", { alpha: false, antialias: false, powerPreference: "high-performance" });
@@ -216,7 +220,6 @@ export function serviette() {
     section.dataset.etat = "image";
     return;
   }
-  const trace = calque?.getContext("2d");
   let actif = false;
   const repli = () => {
     section.dataset.etat = "image";
@@ -420,19 +423,6 @@ export function serviette() {
       });
     }
 
-    // Trajets des aiguilles, reportés sur la serviette.
-    for (const a of aiguilles) {
-      const miennes = pieces.filter((pc) => pc.g.nom === a.groupe);
-      a.X = new Float32Array(a.t.length);
-      a.Y = new Float32Array(a.t.length);
-      for (let i = 0; i < a.t.length; i++) {
-        // la pièce du groupe qui contient ce point (un groupe coupé en deux lignes en a deux)
-        const pc = miennes.find((m) => a.x[i] >= m.source[0] - 2 && a.x[i] <= m.source[2] + 2) ?? miennes[0];
-        [a.X[i], a.Y[i]] = poser(pc, a.x[i], a.y[i]);
-      }
-      a.echelle = miennes[0].echelle;
-    }
-
     // ── Les plans de caméra ──
     // Jusqu'où s'approcher : assez pour lire le fil, sans trop agrandir l'image.
     const zoomMax = empile ? 1.32 : borner(1.55 / echelle, 1.3, 2.7);
@@ -548,126 +538,8 @@ export function serviette() {
     }
   }
 
-  // ── Les aiguilles et leur fil ──
-  // Chaque aiguille suit le trajet calculé par l'outil : elle coud un morceau, saute au suivant.
-  // Son fil ne tombe pas du ciel : il sort de la serviette en arc, d'un point au suivant.
-  //   - pendant la couture, une petite boucle accompagne le dernier point posé ;
-  //   - d'un morceau à l'autre, le fil s'élance en arc de cercle, puis replonge dans le linge.
-  const aiguilles = D.groupes.flatMap((g) => g.aiguilles.map((a) => ({ ...a, sauts: new Set(a.sauts), groupe: g.nom, grand: g.grand })));
-  const ELAN = 0.16; // le fil sort du linge un peu avant de sauter
-  const TRAINE = 0.2; // et finit d'y rentrer un peu après s'être posé
-
-  // Position de la pointe à l'instant tau, sur la serviette. en_saut : entre deux morceaux.
-  function pointe(a, tau) {
-    const n = a.t.length;
-    if (tau <= a.t[0]) return { x: a.X[0], y: a.Y[0], saut: false };
-    if (tau >= a.t[n - 1]) return { x: a.X[n - 1], y: a.Y[n - 1], saut: false };
-    let i = 0, j = n - 1;
-    while (j - i > 1) {
-      const m = (i + j) >> 1;
-      if (a.t[m] <= tau) i = m;
-      else j = m;
-    }
-    const k = (tau - a.t[i]) / Math.max(1e-4, a.t[j] - a.t[i]);
-    return { x: melanger(a.X[i], a.X[j], k), y: melanger(a.Y[i], a.Y[j], k), saut: a.sauts.has(i) };
-  }
-
-  // Un arc de cercle de A vers B, bombé vers le haut de l'écran, tracé de la part u0 à la part u1.
-  // L'ombre est le même fil, vu à plat sur le linge, décalé à l'opposé de la lumière.
-  function arc(ax, ay, bx, by, fleche, u0, u1, epais, force) {
-    const dx = bx - ax, dy = by - ay, corde = Math.hypot(dx, dy);
-    if (corde < 0.5 || u1 - u0 < 0.02 || force <= 0.01) return;
-    // normale tournée vers le haut (un peu vers la gauche pour une corde verticale)
-    let nx = -dy / corde, ny = dx / corde;
-    if (nx * -0.3 + ny * -1 < 0) {
-      nx = -nx;
-      ny = -ny;
-    }
-    const f = Math.min(fleche, corde * 0.5); // au plus un demi-cercle
-    const rayon = (corde * corde) / (8 * f) + f / 2;
-    const ox = (ax + bx) / 2 - nx * (rayon - f), oy = (ay + by) / 2 - ny * (rayon - f);
-    // de A à B en passant par le sommet, qui est à mi-chemin
-    const a0 = Math.atan2(ay - oy, ax - ox);
-    const versSommet = Math.atan2(ny, nx) - a0;
-    const balaie = 2 * Math.atan2(Math.sin(versSommet), Math.cos(versSommet));
-    const N = Math.max(6, Math.min(22, Math.round(corde / 5)));
-    const pts = [];
-    for (let i = 0; i <= N; i++) {
-      const s = melanger(u0, u1, i / N), ang = a0 + balaie * s;
-      const x = ox + rayon * Math.cos(ang), y = oy + rayon * Math.sin(ang);
-      // hauteur au-dessus du linge : nulle aux deux bouts
-      const hauteur = (x - (ax + dx * s)) * nx + (y - (ay + dy * s)) * ny;
-      pts.push([x, y, hauteur, ax + dx * s, ay + dy * s]);
-    }
-    // ombre : à plat, glissée vers le bas à droite à mesure que le fil s'élève
-    trace.strokeStyle = "#28170f";
-    for (const [large, alpha] of [[2.6, 0.07], [1.5, 0.13]]) {
-      trace.globalAlpha = alpha * force;
-      trace.lineWidth = epais * large;
-      trace.beginPath();
-      pts.forEach(([, , h, sx, sy], i) => trace[i ? "lineTo" : "moveTo"](sx + h * 0.42 + epais * 0.3, sy + h * 0.5 + epais * 0.4));
-      trace.stroke();
-    }
-    // le fil, puis son reflet sur le dessus
-    for (const [teinte, large, decale, alpha] of [["#7c4f33", 1, 0, 1], ["#c0926a", 0.36, -0.24, 0.8]]) {
-      trace.globalAlpha = alpha * force;
-      trace.strokeStyle = teinte;
-      trace.lineWidth = epais * large;
-      trace.beginPath();
-      pts.forEach(([x, y], i) => trace[i ? "lineTo" : "moveTo"](x + epais * decale, y + epais * decale));
-      trace.stroke();
-    }
-  }
-
-  function dessinerFils(tau, vue) {
-    if (!trace) return;
-    const dpr = toile.width / ecran.l;
-    trace.setTransform(dpr, 0, 0, dpr, 0, 0);
-    trace.clearRect(0, 0, ecran.l, ecran.h);
-    if (tau < -ELAN || tau > D.duree + TRAINE + 0.1) return;
-    const echelle = ecran.l / vue.largeur;
-    const X = (x) => ecran.l / 2 + (x - vue.cx) * echelle, Y = (y) => ecran.h / 2 + (y - vue.cy) * echelle;
-    trace.lineCap = "round";
-    trace.lineJoin = "round";
-
-    for (const a of aiguilles) {
-      const n = a.t.length;
-      if (tau < a.t[0] - ELAN || tau > a.t[n - 1] + TRAINE) continue;
-      // épaisseur du fil : légèrement exagérée, pour qu'il se lise à toutes les tailles d'écran
-      const taille = echelle * a.echelle;
-      const epais = Math.max(1.3, (a.grand ? 3.6 : 2.5) * taille);
-
-      // D'un morceau au suivant : le fil s'élance en arc, la tête d'abord, la queue ensuite.
-      for (const i of a.sauts) {
-        const depart = a.t[i] - ELAN, pose = a.t[i + 1], rentre = pose + TRAINE;
-        if (tau <= depart || tau >= rentre) continue;
-        const corde = Math.hypot(a.X[i + 1] - a.X[i], a.Y[i + 1] - a.Y[i]) * echelle;
-        if (corde < 5) continue;
-        const tete = sortir(borner((tau - depart) / (pose - depart)));
-        const queue = adoucir(borner((tau - (depart + 0.09)) / (rentre - depart - 0.09)));
-        const fleche = borner(corde * 0.42, 7, Math.max(16, 62 * taille));
-        // il sort du linge et y rentre sans à-coup
-        const force = borner((tau - depart) / 0.06) * borner((rentre - tau) / 0.08);
-        arc(X(a.X[i]), Y(a.Y[i]), X(a.X[i + 1]), Y(a.Y[i + 1]), fleche, queue, tete, epais, force);
-      }
-
-      // Pendant la couture : une petite boucle de fil sur le dernier point posé, qui bat à chaque piqûre.
-      if (tau > a.t[0] && tau < a.t[n - 1]) {
-        const ici = pointe(a, tau), avant = pointe(a, tau - 0.085);
-        if (!ici.saut && !avant.saut) {
-          const corde = Math.hypot(ici.x - avant.x, ici.y - avant.y) * echelle;
-          const bat = 0.78 + 0.22 * Math.sin(tau * 58 + a.t[0] * 9);
-          const fleche = Math.max(4.5, corde * 0.55) * bat;
-          const entree = borner((tau - a.t[0]) / 0.12) * borner((a.t[n - 1] - tau) / 0.1);
-          arc(X(avant.x), Y(avant.y), X(ici.x), Y(ici.y), fleche, 0, 1, epais * 0.92, entree);
-        }
-      }
-    }
-    trace.globalAlpha = 1;
-  }
-
   // ── Temps ──
-  // t : secondes depuis le début de la pose. La couture commence après POSE + SILENCE.
+  // t : secondes depuis le début de la pose. La broderie commence à apparaître après POSE + SILENCE.
   const total = () => POSE + SILENCE + D.duree + 0.1 + RECUL;
   let t = 0;
   let vitesse = 1;
@@ -681,10 +553,6 @@ export function serviette() {
     if (toile.width !== l || toile.height !== h) {
       toile.width = l;
       toile.height = h;
-      if (calque) {
-        calque.width = l;
-        calque.height = h;
-      }
     }
     gl.viewport(0, 0, l, h);
     const pose = borner(t / POSE);
@@ -706,7 +574,6 @@ export function serviette() {
     }
     gl.uniform1f(u.uSurvolForce, survol.force);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    dessinerFils(tau, vue);
   }
 
   // L'état de la section ne s'écrit dans la page que lorsqu'il change.
@@ -761,6 +628,7 @@ export function serviette() {
       gl.uniform3f(u.uMarges, D.margeHaut, D.margeBas, D.margeCote);
       gl.uniform3f(u.uMoyenne, ...D.moyenne);
       gl.uniform1f(u.uDuree, D.duree);
+      gl.uniform1f(u.uDouceur, D.douceur);
       gl.uniform4f(u.uSurvol, 0, 0, 0, 0);
       gl.uniform2f(u.uSurvolAngle, 1, 0);
       pret = true;

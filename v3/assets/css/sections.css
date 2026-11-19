@@ -16,8 +16,7 @@
 }
 
 .serviette__image,
-.serviette__toile,
-.serviette__fils {
+.serviette__toile {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -46,12 +45,7 @@
   opacity: 0;
 }
 
-/* Les fils des aiguilles, dessinés par-dessus la serviette pendant la couture. */
-.serviette__fils {
-  pointer-events: none;
-}
-
-.serviette[data-etat="image"] :is(.serviette__toile, .serviette__fils) {
+.serviette[data-etat="image"] .serviette__toile {
   display: none;
 }
 
