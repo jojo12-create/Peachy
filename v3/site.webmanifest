@@ -1,0 +1,13 @@
+{
+  "name": "Peachy — Lymphatic Therapy",
+  "short_name": "Peachy",
+  "lang": "fr",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#28170f",
+  "theme_color": "#28170f",
+  "icons": [
+    { "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
+  ]
+}

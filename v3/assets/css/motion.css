@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Peachy — mouvement.
+
+   Principes :
+   - le contenu est visible par défaut ; les états de départ ne s'appliquent
+     que lorsque le script a posé la classe .js sur <html> ;
+   - seules transform, opacity et clip-path sont animées ;
+   - une entrée par conteneur, des décalages courts et dégressifs ;
+   - prefers-reduced-motion : plus de déplacement, un simple fondu.
+   ========================================================================== */
+
+/* ── Couverture : la serviette ───────────────────────────────────────────── */
+/* La pose et la couture sont dessinées par le script. Ici, seulement l'arrivée de la toile
+   et l'invitation à descendre, qui attend que le dernier point soit cousu. */
+
+.serviette__toile {
+  transition: opacity 700ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .serviette:not([data-etat="image"]) .serviette__suite {
+    opacity: 0;
+    transition: opacity 900ms ease 200ms;
+  }
+  .js .serviette[data-etat="cousu"] .serviette__suite {
+    opacity: 1;
+  }
+  /* les points se cousent de haut en bas, une fois */
+  .js .serviette:not([data-etat="image"]) .serviette__suite span {
+    clip-path: inset(0 -2px 100% -2px);
+    transition: clip-path 1100ms var(--ease-out) 300ms;
+  }
+  .js .serviette[data-etat="cousu"] .serviette__suite span {
+    clip-path: inset(0 -2px -2px -2px);
+  }
+}
+
+/* ── Révélations au défilement ───────────────────────────────────────────── */
+/* data-reveal="monte"  : texte, fondu + légère montée
+   data-reveal="fondu"  : éléments décoratifs, fondu seul
+   data-reveal="trait"  : filet qui se dessine
+   data-reveal="photo"  : photographie dévoilée par un masque, de bas en haut
+   --i                  : rang dans le groupe (décalage dégressif)            */
+
+.js [data-reveal] {
+  --delai: calc(var(--pas) * var(--i, 0) * (1 - var(--i, 0) * 0.07));
+}
+
+/* Les transitions de révélation ne vivent que le temps de l'entrée : le script pose
+   data-pose à la fin, et l'élément retrouve ses transitions propres (survol, pression). */
+.js [data-reveal]:not([data-pose]) {
+  transition:
+    opacity var(--d-revelation) var(--ease-out) var(--delai),
+    transform var(--d-revelation) var(--ease-out) var(--delai);
+}
+
+.js [data-reveal="monte"]:not([data-vu]) {
+  opacity: 0;
+  transform: translateY(1.125rem);
+}
+
+.js [data-reveal="fondu"]:not([data-vu]) {
+  opacity: 0;
+}
+
+.js [data-reveal="trait"]:not([data-vu]) {
+  transform: scaleX(0);
+}
+
+/* Le masque est porté par <picture> : l'élément observé garde sa boîte entière. */
+.js [data-reveal="photo"]:not([data-pose]) {
+  transition:
+    background-color var(--d-photo) ease var(--delai),
+    box-shadow var(--d-photo) ease var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-pose]) picture {
+  clip-path: inset(0);
+  transition: clip-path var(--d-photo) var(--ease-out) var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-pose]) img {
+  transition: transform var(--d-photo) var(--ease-out) var(--delai);
+}
+
+.js [data-reveal="photo"]:not([data-vu]) {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.js [data-reveal="photo"]:not([data-vu]) picture {
+  clip-path: inset(100% 0 0 0);
+}
+
+.js [data-reveal="photo"]:not([data-vu]) img {
+  transform: scale(1.1);
+}
+
+/* ── Mouvements liés au défilement (CSS seul, hors fil principal) ────────── */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Le geste : le cadrage se resserre doucement pendant la traversée. */
+    .geste__media img {
+      animation: cadrage linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% exit 100%;
+    }
+
+    /* Le détail de la philosophie glisse un peu plus vite que le portrait. */
+    .philosophie__detail {
+      animation: glisse linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes cadrage {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes glisse {
+  from {
+    transform: translateY(1.75rem);
+  }
+  to {
+    transform: translateY(-1.75rem);
+  }
+}
+
+/* ── Mouvement réduit : on garde les fondus, on retire les déplacements ──── */
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal]:not([data-pose]),
+  .js [data-reveal="photo"]:not([data-pose]) {
+    --delai: 0ms;
+    transition: opacity 300ms ease;
+  }
+  .js [data-reveal="monte"]:not([data-vu]),
+  .js [data-reveal="trait"]:not([data-vu]) {
+    transform: none;
+  }
+  .js [data-reveal="trait"]:not([data-vu]),
+  .js [data-reveal="photo"]:not([data-vu]) {
+    opacity: 0;
+  }
+  .js [data-reveal="photo"]:not([data-pose]) picture,
+  .js [data-reveal="photo"]:not([data-vu]) picture {
+    clip-path: none;
+    transition: none;
+  }
+  .js [data-reveal="photo"]:not([data-pose]) img,
+  .js [data-reveal="photo"]:not([data-vu]) img {
+    transform: none;
+    transition: none;
+  }
+  .entete,
+  .btn,
+  .btn__fleche,
+  .carte,
+  .carte__photo img {
+    transition-duration: 1ms;
+  }
+  .carte:hover,
+  .btn:hover,
+  .carte:hover .carte__photo img {
+    transform: none;
+  }
+}

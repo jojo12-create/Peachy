@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Peachy — Lymphatic Therapy
+   Variables de design : couleurs, matières, typographie, ombres, rayons,
+   espacements, mouvement. Toute valeur du site vient d'ici.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../fonts/playfair-display-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../fonts/playfair-display-400-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* Polices de repli calées sur les métriques des webfonts : pas de saut de mise en page. */
+@font-face {
+  font-family: "Playfair Repli";
+  src: local("Georgia"), local("Times New Roman");
+  size-adjust: 104%;
+  ascent-override: 104%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Inter Repli";
+  src: local("Arial"), local("Helvetica");
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* ── Palette (échantillonnée sur le moodboard) ─────────────────────────── */
+  --chocolat-nuit: #1d100a;      /* pied de page, fonds les plus profonds */
+  --chocolat: #28170f;           /* chocolat profond */
+  --cacao: #4a281a;              /* brun cacao */
+  --terracotta: #975d3e;
+  --linge: #cbbfbe;              /* teinte moyenne de la serviette de la couverture */
+  --fil: #8a5b3c;                /* fil de la broderie */
+  --taupe: #b3947f;              /* taupe chaud */
+  --sable: #d5bba4;              /* beige sable */
+  --creme: #ead9c6;
+  --ivoire: #f5ebde;
+
+  /* Encres : jamais de noir ni de blanc pur */
+  --encre: var(--chocolat);                    /* texte sur fonds clairs */
+  --encre-douce: #5e3a29;                      /* texte secondaire sur fonds clairs (≥ 6:1 sur crème) */
+  --lumiere: var(--ivoire);                    /* texte sur fonds sombres */
+  --lumiere-douce: #dcc5ae;                    /* texte secondaire sur fonds sombres */
+  --filet-clair: rgb(245 235 222 / 0.26);
+  --filet-sombre: rgb(40 23 15 / 0.22);
+
+  /* ── Matières (WebP transparents, posés sur la couleur du fond) ────────── */
+  --matiere-papier: url("../img/textures/papier.webp");
+  --matiere-enduit: url("../img/textures/enduit.webp");
+  --matiere-chocolat: url("../img/textures/chocolat.webp");
+  --matiere-lin: url("../img/textures/lin.webp");
+  --matiere-ombre: url("../img/textures/ombre-palme.webp");
+
+  /* ── Typographie ───────────────────────────────────────────────────────── */
+  --serif: "Playfair Display", "Playfair Repli", Georgia, "Times New Roman", serif;
+  --sans: "Inter", "Inter Repli", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --t-display: clamp(2.75rem, 1.35rem + 5.6vw, 6rem);       /* titre du hero */
+  --t-titre: clamp(2.25rem, 1.3rem + 3.5vw, 4.25rem);       /* titres de section */
+  --t-phrase: clamp(2.5rem, 1.2rem + 5.2vw, 5.5rem);        /* phrases de marque */
+  --t-sous-titre: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
+  --t-chapo: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --t-texte: 1rem;
+  --t-petit: 0.875rem;
+  --t-label: 0.75rem;
+
+  --interligne-titre: 1.06;
+  --interligne-texte: 1.65;
+  --approche-label: 0.2em;
+
+  /* ── Espacements ───────────────────────────────────────────────────────── */
+  --gouttiere: clamp(1.25rem, 5vw, 4.5rem);          /* marges latérales */
+  --largeur: 80rem;                                  /* largeur utile maximale */
+  --section-y: clamp(5.5rem, 13vh, 9rem);            /* respiration haut/bas d'une section */
+  --e-1: 0.5rem;
+  --e-2: 1rem;
+  --e-3: 1.5rem;
+  --e-4: 2.5rem;
+  --e-5: 4rem;
+  --e-6: 6rem;
+  --entete: 4.5rem;                                  /* hauteur de la barre de navigation */
+
+  /* ── Rayons : légers, jamais excessifs ─────────────────────────────────── */
+  --rayon-bouton: 3px;
+  --rayon-carte: 6px;
+  --rayon-photo: 4px;
+  --rayon-arche: 999px 999px var(--rayon-photo) var(--rayon-photo);
+
+  /* ── Ombres : chaudes, décalées, diffuses ──────────────────────────────── */
+  --ombre-contact: 0 1px 2px rgb(40 23 15 / 0.16);
+  --ombre-carte: 0 1px 2px rgb(40 23 15 / 0.08), 0 14px 32px -14px rgb(40 23 15 / 0.28);
+  --ombre-carte-survol: 0 2px 4px rgb(40 23 15 / 0.1), 0 26px 48px -18px rgb(40 23 15 / 0.38);
+  --ombre-photo: 0 30px 60px -30px rgb(40 23 15 / 0.45);
+  --ombre-bouton: 0 1px 1px rgb(20 10 5 / 0.3), 0 12px 24px -12px rgb(20 10 5 / 0.6);
+  --ombre-bouton-survol: 0 2px 3px rgb(20 10 5 / 0.3), 0 18px 30px -14px rgb(20 10 5 / 0.65);
+  --relief-clair: inset 0 1px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(40 23 15 / 0.08);
+  --relief-sombre: inset 0 1px 0 rgb(245 235 222 / 0.12), inset 0 -1px 0 rgb(0 0 0 / 0.25);
+
+  /* ── Mouvement ─────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);          /* entrées, sorties, survols */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);      /* déplacements à l'écran */
+  --d-pression: 140ms;        /* réponse au toucher */
+  --d-survol: 240ms;          /* survols, soulignés */
+  --d-interface: 280ms;       /* barre de navigation, menu */
+  --d-revelation: 900ms;      /* apparition des contenus au défilement */
+  --d-photo: 1200ms;          /* dévoilement des photographies */
+  --pas: 90ms;                /* décalage entre deux éléments d'un même groupe */
+
+  /* ── Couches ───────────────────────────────────────────────────────────── */
+  --z-chapitres: 40;
+  --z-entete: 50;
+  --z-menu: 60;
+}
+
+@media (max-width: 47.99rem) {
+  :root {
+    --entete: 4rem;
+    --d-revelation: 700ms;    /* mouvements plus courts sur mobile */
+    --d-photo: 900ms;
+    --pas: 70ms;
+  }
+}

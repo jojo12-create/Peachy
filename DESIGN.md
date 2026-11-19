@@ -86,6 +86,33 @@ Jamais à un effet.
   Papier et gravure partagent la même lumière : ils sortent tous deux de `tools/couverture.py`.
   <!-- 2026-11-18 : « Travaille la texture pour que ça soit comme sur les moods donnés, pareil pour la DA et la gravure » -->
 
+## Couverture de la v3 : la serviette brodée
+
+Dans `v3/`, la couverture et le hero ne font plus qu'un : une serviette éponge crème, brodée.
+Les règles ci-dessus (logo gravé dans le papier) restent celles de la racine et de `v2/`.
+
+- **À l'ouverture, seulement la serviette.** Elle se dépose, ses plis se forment, puis tout s'arrête.
+  Alors seulement la broderie se coud sous nos yeux : la devise, le trait du milieu, chaque catégorie, le logo.
+  <!-- 2026-11-19 : « À l'ouverture juste la serviette qui se dépose et les plis se crée puis ça se stop et les catégories et différents écrits se cousent petit à petit sous nos yeux. Chaque coutures, même le trait du mieu, tout ce qui représente quelque chose de cousu. » -->
+- **Le fil suit la serviette.** La broderie affichée est celle de l'image brodée : elle épouse les plis et la perspective.
+  On n'y superpose jamais de texte dessiné par le navigateur ; seul l'ordre d'apparition des points est calculé.
+  <!-- 2026-11-19 : « Les catégories et donc les coutures qui se sont cousues suivent les ondulations de la serviettes et ça crée de la perspective et un sentiment de réalisme très détaillé. » -->
+- **Avant la couture, la serviette nue est une vraie image**, pas la serviette brodée dont on aurait effacé le fil.
+  <!-- 2026-11-19 : « Utilise image ici sans rien dessus juste serviette pour avant couture car la suppression a laissé des marques » -->
+- Les deux images (`photos/originaux/serviette-brodee.jpg`, `serviette-nue.jpg`) ont été fournies pour cette couverture :
+  c'est la seule exception à la règle « seules les vraies photographies de Peachy ».
+  <!-- 2026-11-19 : images de la serviette fournies avec la demande « pour que cette image devienne le hero » -->
+- **Les catégories brodées sont la navigation** de la couverture : chaque mot est un lien, actif dès qu'il est cousu.
+  La barre n'apparaît qu'en quittant la couverture, comme avant.
+- **La broderie n'est jamais coupée.** Le cadrage montre toujours tout ce qui est brodé ; si l'écran est plus haut ou plus
+  large que l'image, la serviette se prolonge (éponge et plis continués, jamais de flou ni de miroir).
+- **Petit écran** : les lettres seraient trop petites en plan d'ensemble. La caméra reste près du fil pendant la couture,
+  puis recule pour montrer la serviette entière.
+- **Rien ne retient la personne** : dès qu'elle défile, la couture se hâte ; au retour arrière ou en mouvement réduit,
+  la serviette est déjà brodée.
+- Le fil a sa couleur (`--fil`), le linge la sienne (`--linge`). L'invitation à descendre est cousue du même fil.
+- Tout sort de `tools/serviette.py` (serviette nue calée, carte de couture, plis, grain) : on ne retouche pas ces fichiers à la main.
+
 ## Mise en page
 
 - Une suite de **chapitres plein écran** (`min-height: 100svh`). Un contenu long peut dépasser la hauteur d'un écran.

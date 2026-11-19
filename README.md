@@ -5,6 +5,33 @@ Une page en chapitres plein écran, qui alterne deux univers : **Chocolat immers
 
 Site statique : HTML, CSS et JavaScript natifs. Aucun framework, aucune dépendance, aucune étape de build.
 
+## Versions
+
+| Dossier | Contenu |
+| --- | --- |
+| racine | version d'origine : couverture « logo gravé dans le papier », puis hero photo |
+| `v2/` | copie fidèle de la version d'origine, gardée telle quelle |
+| `v3/` | couverture « serviette brodée » : la serviette se dépose, puis la broderie se coud |
+
+Chaque dossier est un site complet (ses pages, ses `assets`). Avec le serveur ci-dessous :
+http://localhost:4173/ · http://localhost:4173/v2/ · http://localhost:4173/v3/
+
+### La serviette brodée (v3)
+
+L'animation part de deux images de la même serviette, dans `photos/originaux` : `serviette-brodee.jpg`
+(état final) et `serviette-nue.jpg` (avant couture). Tout le reste est calculé :
+
+```bash
+pip install opencv-contrib-python-headless scikit-image   # une fois
+python3 tools/serviette.py                                 # écrit v3/assets/img/serviette et v3/assets/js/serviette-donnees.js
+python3 tools/serviette.py --controle                      # ajoute des planches de contrôle dans shots/
+```
+
+- Le minutage de la couture (ordre des groupes, début, durée) se règle en tête de `tools/serviette.py`.
+- Pour changer d'images, remplacer les deux originaux (même serviette, même cadrage) et relancer l'outil.
+  `PROMPT-HERO.md` donne les prompts pour les régénérer au format du hero.
+- `http://localhost:4173/v3/?instant=6.5` fige l'animation à 6,5 s (contrôle, captures).
+
 ## Voir le site
 
 ```bash
