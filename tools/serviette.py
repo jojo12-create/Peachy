@@ -13,9 +13,10 @@ fabrique tout ce dont l'animation a besoin :
 
   serviette-brodee.webp   l'image brodée, telle quelle
   serviette-nue.webp      la serviette nue, calée au pixel sur l'image brodée, prolongée sur les côtés
-  couture.png             carte d'apparition : R,V = instant où la lanière passe (16 bits),
+  couture.png             carte d'apparition : R,V = instant où le pixel apparaît (16 bits),
                           B = emprise du fil et de son ombre (fondu vers la serviette nue)
-  points.png              relief des points de broderie : R,V = position dans le point, B = numéro du groupe
+  points.png              relief des points de broderie : R,V = position dans le point,
+                          B = numéro du groupe (× 20), + 8 pour les A
   plis.webp               lumière des plis (basse fréquence), prolongée au-dessus et en dessous
   eponge.png              grain de bouclette raccordable, pour prolonger la serviette
   assets/js/serviette-donnees.js   mesures, groupes, minutage
@@ -55,22 +56,22 @@ SIGMA_PLIS = 14.0
 TUILE = 512               # côté du grain de bouclette
 
 # ── Groupes brodés ───────────────────────────────────────────────────────────
-# Dans l'ordre où ils se cousent. Les lignes sont reconnues d'elles-mêmes dans l'image :
+# Les lignes sont reconnues d'elles-mêmes dans l'image :
 #   gauche / droite : lignes de texte de part et d'autre du trait vertical, de haut en bas ;
 #   trait : le trait vertical ; grand : les grandes lettres du logo ; dessous : la ligne sous le logo.
-# debut / duree : fenêtre d'apparition du groupe, en secondes après la pose de la serviette.
+# texte : ce qui est brodé, lettre pour lettre (sert à reconnaître les A, qui apparaissent en dernier).
 # lien : ancre du chapitre (les catégories brodées servent de navigation).
 GROUPES = [
-    dict(nom="devise-1", texte="L’art de prendre", cote="gauche", debut=0.00, duree=1.75),
-    dict(nom="devise-2", texte="soin de soi", cote="gauche", debut=0.55, duree=1.55),
-    dict(nom="trait", texte="", cote="trait", debut=1.80, duree=0.85),
-    dict(nom="maison", texte="La maison", cote="droite", debut=2.40, duree=1.05),
-    dict(nom="rituels", texte="Les rituels", cote="droite", debut=2.70, duree=1.15),
-    dict(nom="drainage", texte="Le drainage lymphatique", cote="droite", debut=3.00, duree=1.80),
-    dict(nom="philosophie", texte="La philosophie", cote="droite", debut=3.50, duree=1.40),
-    dict(nom="univers", texte="L’univers", cote="droite", debut=4.00, duree=1.10),
-    dict(nom="peachy", texte="Peachy", cote="grand", debut=5.50, duree=1.65),
-    dict(nom="lymphatic", texte="Lymphatic Therapy", cote="dessous", debut=6.45, duree=1.25),
+    dict(nom="devise-1", texte="L’art de prendre", cote="gauche"),
+    dict(nom="devise-2", texte="soin de soi", cote="gauche"),
+    dict(nom="trait", texte="", cote="trait"),
+    dict(nom="maison", texte="La maison", cote="droite"),
+    dict(nom="rituels", texte="Les rituels", cote="droite"),
+    dict(nom="drainage", texte="Le drainage lymphatique", cote="droite"),
+    dict(nom="philosophie", texte="La philosophie", cote="droite"),
+    dict(nom="univers", texte="L’univers", cote="droite"),
+    dict(nom="peachy", texte="Peachy", cote="grand"),
+    dict(nom="lymphatic", texte="Lymphatic Therapy", cote="dessous"),
 ]
 
 # Un point de broderie : la longueur de fil posée à chaque piqûre, en pixels image.
@@ -78,9 +79,17 @@ GROUPES = [
 PAS_POINT = 3.0
 PAS_GRAND = 4.4
 
-# Les lanières : de longues bandes souples qui glissent le long de chaque ligne et la font apparaître.
+# ── Apparition de la broderie ────────────────────────────────────────────────
+# D'abord toutes les lettres sauf les A, une à une, au hasard d'un mot à l'autre, chacune dans un
+# léger flou. Puis les A, eux aussi dans le désordre, dévoilés par des lanières : de fines bandes
+# souples qui glissent en travers de la lettre. Durées en secondes, après la pose de la serviette.
+DUREE_LETTRES = 3.9       # temps pendant lequel les lettres (hors A) commencent à apparaître
+FONDU_LETTRE = 0.55       # fondu d'une lettre, du flou au net
+PAUSE_AVANT_A = 0.3       # entre la dernière lettre et le premier A
+ECART_A = 0.14            # entre deux A
+DUREE_A = 0.85            # temps que mettent les lanières à dévoiler un A
 LANIERES_PAR_LETTRE = 5   # nombre moyen de lanières dans la hauteur d'une lettre
-DOUCEUR = 0.15            # secondes : fondu de la pointe d'une lanière (réglé aussi dans le lecteur)
+DOUCEUR = 0.15            # fondu de la pointe d'une lanière
 
 
 # ── 1. Masque du fil ─────────────────────────────────────────────────────────
@@ -311,12 +320,11 @@ def traits_d_une_lettre(squelette):
 
 
 def lanieres(xs, ys, centre, angle, haut_lettre, debut, duree, rng):
-    """L'instant où chaque pixel d'une ligne apparaît.
+    """L'instant où chaque pixel d'une lettre apparaît, par lanières.
 
-    La ligne est découpée dans sa hauteur en lanières d'épaisseurs inégales, qui ondulent
-    doucement le long du texte. Chacune part à son heure, sans ordre (elles sont éparses),
-    et glisse d'un bout à l'autre de la ligne ; son milieu avance un peu devant ses bords,
-    ce qui lui donne une pointe arrondie.
+    La lettre est découpée dans sa hauteur en lanières d'épaisseurs inégales, qui ondulent
+    doucement. Chacune part à son heure, sans ordre (elles sont éparses), et glisse d'un bord
+    à l'autre ; son milieu avance un peu devant ses bords, ce qui lui donne une pointe arrondie.
     """
     c, s_ = np.cos(angle), np.sin(angle)
     u = (xs - centre[0]) * c + (ys - centre[1]) * s_          # le long de la ligne
@@ -341,30 +349,54 @@ def lanieres(xs, ys, centre, angle, haut_lettre, debut, duree, rng):
     return depart[rang] + course[rang] * (0.9 * f ** 0.9 + 0.1 * ecart ** 2), n
 
 
+def ordre_eparpille(groupes_des_lettres, rng):
+    """Un ordre de passage où deux lettres qui se suivent ne sont jamais du même mot (tant que c'est possible)."""
+    reste = {}
+    for i, g in enumerate(groupes_des_lettres):
+        reste.setdefault(g, []).append(i)
+    for lettres in reste.values():
+        rng.shuffle(lettres)
+    ordre, dernier = [], None
+    while reste:
+        choix = [g for g in reste if g != dernier] or list(reste)
+        poids = np.array([len(reste[g]) for g in choix], float)
+        g = choix[rng.choice(len(choix), p=poids / poids.sum())]
+        ordre.append(reste[g].pop())
+        if not reste[g]:
+            del reste[g]
+        dernier = g
+    return ordre
+
+
 def carte_couture(fil):
     """Décide quand chaque pixel de la broderie apparaît, et note le relief de ses points.
 
-    La broderie n'est ni tapée lettre après lettre ni cousue fil à fil : chaque ligne est dévoilée
-    par des lanières douces et éparses (voir lanieres). Le relief des points de broderie, lui,
-    suit le tracé de chaque lettre.
+    Les lettres apparaissent une à une, éparses, d'un mot à l'autre ; les A en dernier, par lanières
+    (voir lanieres). Le relief des points de broderie suit le tracé de chaque lettre.
     """
     h, w = fil.shape
     etiquettes, rangs = ranger(fil)
-    _, _, stats, _ = cv2.connectedComponentsWithStats(fil, 8)
+    _, _, stats, centres = cv2.connectedComponentsWithStats(fil, 8)
     rng = np.random.default_rng(5)
     phase_sq = np.zeros((h, w), np.float32)       # position dans le point (pour le relief des points)
     groupe_sq = np.zeros((h, w), np.uint8)        # numéro du groupe : chaque mot peut être déplacé seul
+    lettre_sq = np.zeros((h, w), np.int32)        # numéro de la lettre
     squelettes = np.zeros((h, w), bool)
-    infos = []
+    infos, lettres = [], []                       # lettres : (composante, rang du groupe, est un A)
     for rang, g in enumerate(GROUPES, start=1):
         grand = g["cote"] == "grand"
         pas = PAS_GRAND if grand else PAS_POINT
-        for i in rangs[g["nom"]]:
+        signes = [c for c in g["texte"].lower() if not c.isspace()]
+        if signes and len(signes) != len(rangs[g["nom"]]):
+            raise SystemExit(f"{g['nom']} : {len(rangs[g['nom']])} lettres trouvées dans l'image, {len(signes)} dans « {g['texte']} »")
+        for k, i in enumerate(rangs[g["nom"]]):
+            lettres.append((i, rang, bool(signes) and signes[k] == "a"))
             for trait in traits_d_une_lettre(skeletonize(etiquettes == i)):
                 abscisse = np.r_[0.0, np.cumsum(np.hypot(*np.diff(trait, axis=0).T))]
                 ys, xs = trait.astype(int).T
                 phase_sq[ys, xs] = 2 * np.pi * abscisse / pas
                 groupe_sq[ys, xs] = rang
+                lettre_sq[ys, xs] = len(lettres)
                 squelettes[ys, xs] = True
         ys, xs = np.nonzero(np.isin(etiquettes, rangs[g["nom"]]))
         (cx, cy), (bw, bh), angle = cv2.minAreaRect(np.column_stack([xs, ys]).astype(np.float32))
@@ -384,12 +416,11 @@ def carte_couture(fil):
             else:
                 mots[-1] = [mots[-1][0], min(mots[-1][1], b[1]), b[2], max(mots[-1][3], b[3])]
         infos.append(dict(
-            nom=g["nom"], texte=g["texte"], lien=g.get("lien"), mots=mots,
-            debut=g["debut"], duree=g["duree"], grand=grand,
+            nom=g["nom"], texte=g["texte"], lien=g.get("lien"), mots=mots, grand=grand,
             boite=[round(float(xs.min())), round(float(ys.min())), round(float(xs.max())), round(float(ys.max()))],
             cadre=dict(cx=round(cx, 1), cy=round(cy, 1), l=round(bw, 1), h=round(bh, 1), angle=round(angle, 2)),
         ))
-    # Chaque pixel proche d'un fil appartient au groupe et au point de broderie les plus proches.
+    # Chaque pixel proche d'un fil appartient au groupe, à la lettre et au point de broderie les plus proches.
     _, proche = cv2.distanceTransformWithLabels((~squelettes).astype(np.uint8), cv2.DIST_L2, 5, labelType=cv2.DIST_LABEL_PIXEL)
     def etendre(valeurs):
         table = np.zeros(proche.max() + 1, valeurs.dtype)
@@ -401,24 +432,34 @@ def carte_couture(fil):
     emprise = emprise * emprise * (3 - 2 * emprise)
     dedans = emprise > 0
     groupe = np.where(dedans, etendre(groupe_sq), 0)
+    lettre = np.where(dedans, etendre(lettre_sq), 0)
 
-    # Les lanières de chaque groupe.
+    # 1. Les lettres, sauf les A : une à une, jamais deux de suite dans le même mot.
     instant = np.zeros((h, w), np.float32)
-    for rang, (g, info) in enumerate(zip(GROUPES, infos), start=1):
-        ys, xs = np.nonzero(groupe == rang)
-        cadre = info["cadre"]
-        if g["cote"] == "trait":
-            x0, y0, x1, y1 = info["boite"]
-            angle, haut_lettre = np.arctan2(y1 - y0, x1 - x0), 7.0      # le trait se dévoile dans sa longueur
-        else:
-            angle, haut_lettre = np.radians(cadre["angle"]), cadre["h"]
-        instant[ys, xs], n = lanieres(xs.astype(np.float32), ys.astype(np.float32), (cadre["cx"], cadre["cy"]),
-                                      angle, haut_lettre, g["debut"], g["duree"], rng)
-        print(f"  {g['nom']:<12} {n:>2} lanières · {g['debut']:.2f} → {g['debut'] + g['duree']:.2f} s")
+    est_a = np.zeros((h, w), bool)
+    simples = [n for n, (_, _, a) in enumerate(lettres, start=1) if not a]
+    les_a = [n for n, (_, _, a) in enumerate(lettres, start=1) if a]
+    ordre = ordre_eparpille([lettres[n - 1][1] for n in simples], rng)
+    depart = np.zeros(len(lettres) + 1, np.float32)
+    for place, k in enumerate(ordre):
+        depart[simples[k]] = DUREE_LETTRES * (place + rng.uniform(-0.35, 0.35)) / max(1, len(simples) - 1)
+    depart = np.clip(depart, 0, None)
+    instant[dedans] = depart[lettre[dedans]]
+    # 2. Les A : à la fin, dans le désordre eux aussi, chacun dévoilé par ses lanières.
+    debut_a = float(depart.max()) + PAUSE_AVANT_A
+    for place, n in enumerate(rng.permutation(les_a)):
+        composante, rang, _ = lettres[n - 1]
+        ys, xs = np.nonzero(lettre == n)
+        cadre = infos[rang - 1]["cadre"]
+        instant[ys, xs], _ = lanieres(xs.astype(np.float32), ys.astype(np.float32), centres[composante],
+                                      np.radians(cadre["angle"]), cadre["h"],
+                                      debut_a + place * ECART_A + rng.uniform(0, 0.06), DUREE_A, rng)
+        est_a[ys, xs] = True
     # les bords des lanières sont adoucis : d'une lanière à sa voisine, l'instant change sur quelques pixels
-    poids = cv2.GaussianBlur(dedans.astype(np.float32), (0, 0), 1.6)
-    instant = np.where(dedans, cv2.GaussianBlur(instant, (0, 0), 1.6) / np.maximum(poids, 1e-3), 0.0)
-    fin = float(instant.max()) + DOUCEUR
+    poids = cv2.GaussianBlur(est_a.astype(np.float32), (0, 0), 1.6)
+    instant = np.where(est_a, cv2.GaussianBlur(instant * est_a, (0, 0), 1.6) / np.maximum(poids, 1e-3), instant)
+    print(f"  {len(simples)} lettres en {float(depart.max()):.1f} s, puis {len(les_a)} A jusqu'à {float(instant.max()):.1f} s")
+    fin = float(instant.max()) + max(DOUCEUR, FONDU_LETTRE)
     # 10 bits suffisent (7 ms) : la carte se compresse bien mieux que sur 16
     code = (np.round(np.clip(instant / fin, 0, 1) * 1023).astype(np.uint32) * 64)
     carte = np.dstack([(code >> 8).astype(np.uint8), (code & 255).astype(np.uint8), np.round(emprise * 255).astype(np.uint8)])
@@ -426,7 +467,7 @@ def carte_couture(fil):
     points = np.dstack([
         np.where(dedans, np.round(np.cos(phase) * 127 + 128), 128),
         np.where(dedans, np.round(np.sin(phase) * 127 + 128), 128),
-        groupe * 20,
+        groupe * 20 + est_a * 8,                  # + 8 : cette lettre est un A (lanières)
     ]).astype(np.uint8)
     return carte, points, infos, fin, squelettes
 
@@ -708,7 +749,7 @@ def main():
     else:
         print("serviette nue : reconstituée (aucune image fournie)")
         nue = serviette_nue(img8, fil)
-    print("lanières…")
+    print("ordre d'apparition…")
     carte, points, groupes, fin, squelettes = carte_couture(fil)
     print("prolongements, plis et grain…")
     large = prolonger_cotes(nue)
@@ -726,7 +767,7 @@ def main():
     donnees = dict(
         largeur=w, hauteur=h,
         margeHaut=MARGE_HAUT, margeBas=MARGE_BAS, margeCote=MARGE_COTE,
-        duree=round(fin, 3), douceur=DOUCEUR,
+        duree=round(fin, 3), fondu=FONDU_LETTRE, douceur=DOUCEUR,
         moyenne=[round(float(c) / 255, 4) for c in moyenne[::-1]],
         grain=round(contraste, 4),
         # la boîte de tout ce qui est brodé : le cadrage ne la coupe jamais

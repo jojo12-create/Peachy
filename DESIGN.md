@@ -102,18 +102,16 @@ Les règles ci-dessus (logo gravé dans le papier) restent celles de la racine e
 - Les deux images (`photos/originaux/serviette-brodee.jpg`, `serviette-nue.jpg`) ont été fournies pour cette couverture :
   c'est la seule exception à la règle « seules les vraies photographies de Peachy ».
   <!-- 2026-11-19 : images de la serviette fournies avec la demande « pour que cette image devienne le hero » -->
-- **La broderie apparaît par lanières.** Ni lettre après lettre, ni fil à fil : de longues bandes souples, d'épaisseurs
-  inégales, ondulent le long de chaque ligne et la dévoilent par endroits, puis en entier. Elles sont éparses
-  (chacune part à son heure, quelques-unes de l'autre bout), leurs bords et leur pointe sont fondus, et une lueur
-  très légère effleure l'éponge là où elles passent. Aucun fil, aucune aiguille n'est dessiné.
-  <!-- 2026-11-19 : « Supprime effet fils et à la place fait apparaître les mots ou lettres de lanières éparses et de lanières douce et sensuelle » -->
-  <!-- 2026-11-19, remplacé le même jour par les lanières : couture point par point à plusieurs aiguilles, puis arcs de fil sortant de la serviette. -->
+- **Les lettres surgissent une à une, éparses.** Jamais lettre après lettre dans l'ordre de lecture : une lettre ici,
+  la suivante dans un autre mot. Chacune arrive dans un léger flou qui se précise. Rien d'autre ne bouge.
+- **Aucun A d'abord.** Les A (ce Λ sans barre qui signe le logo) viennent en dernier, dans le désordre eux aussi,
+  dévoilés par de fines lanières souples qui glissent en travers de la lettre. Aucun fil, aucune aiguille n'est dessiné.
+  <!-- 2026-11-19 : « Juste les lettres paraissent de manière sporadique dans une petit flou, de mots différents, et aucun A. Les A apparaissent à la fin de lanières sporadique aussi » -->
+  <!-- 2026-11-19, essayés puis retirés le même jour : couture point par point à plusieurs aiguilles ; arcs de fil sortant de la serviette (« Supprime effet fils ») ; lanières sur toutes les lignes. -->
 - Le relief des points de broderie reste visible sur le fil, un peu exagéré : la broderie se lit comme du fil, pas comme une encre.
   <!-- 2026-11-19 : « J'aimerais voir les fils de couture aussi. Exagérés un peu. » -->
-- **La caméra suit la broderie, sur tous les écrans.** Une fois la serviette immobile, elle s'approche de ce qui se coud,
-  passe d'un ouvrage au suivant (léger recul en chemin), puis revient au plan d'ensemble. Mouvements longs, courbe douce
-  à l'entrée et à la sortie (easeInOutSine), jamais d'arrêt net : chaque plan dérive lentement.
-  <!-- 2026-11-19 : « J'aimerais que sur ordi ou mobile, après que la serviette s'est figée, la caméra zoom sur ce qui est en train de se coudre. Puis se déplace, dezoom, zoom, déplace au bon vouloir de chaque couture. Il faut que ça soit fluide, pas saccadé, harmonieux. » -->
+- **La caméra ne bouge pas** pendant que la broderie apparaît : plan d'ensemble fixe, du début à la fin.
+  <!-- 2026-11-19 : « Supprime effet caméra. » (les zooms et déplacements qui suivaient la broderie sont retirés) -->
 - **La bande tissée est toujours vers le bas de l'écran**, le logo dedans. Si l'écran est plus haut que l'image,
   la serviette se prolonge vers le haut (éponge et plis continués, jamais de flou ni de miroir).
   <!-- 2026-11-19 : « après le dernier dezoom on est trop loin c'est pas jolie. Le bandeau doit toujours se trouver vers le bas de la page. » -->
@@ -122,15 +120,15 @@ Les règles ci-dessus (logo gravé dans le papier) restent celles de la racine e
   sur deux). Le logo et la serviette ne changent pas. Chaque mot déplacé prend la lumière et l'ondulation des plis où il se pose.
   Écran large : la disposition de la photographie.
   <!-- 2026-11-19 : « Trouve une autre disposition des menus sauf le logo laisse-le dans la bande, et serviette garde comme ça, juste les menus cousus change de dispo pour que ça prenne plus l'écran et toute la verticalité. » -->
-- **Rythme** : pose 2,4 s, apparition de la broderie 7,6 s, retour au plan d'ensemble 1,7 s.
+- **Rythme** : pose 2,4 s, lettres 3,9 s, puis les A ; un peu moins de 10 s en tout.
   <!-- 2026-11-19 : « Accélère un peu les coutures et donc les animations qui vont avec » -->
-- **Les catégories brodées sont la navigation** de la couverture : chaque mot est un lien, actif une fois la caméra
-  revenue au plan d'ensemble. La barre n'apparaît qu'en quittant la couverture, comme avant.
-- **La broderie n'est jamais coupée** dans le plan d'ensemble.
+- **Les catégories brodées sont la navigation** de la couverture : chaque mot est un lien, actif une fois toute
+  la broderie apparue. La barre n'apparaît qu'en quittant la couverture, comme avant.
+- **La broderie n'est jamais coupée.**
 - **Rien ne retient la personne** : dès qu'elle défile, la couture se hâte ; au retour arrière ou en mouvement réduit,
   la serviette est déjà brodée.
 - Le fil a sa couleur (`--fil`), le linge la sienne (`--linge`). L'invitation à descendre est cousue du même fil.
-- Tout sort de `tools/serviette.py` (serviette nue calée, carte des lanières, relief des points, plis, grain) :
+- Tout sort de `tools/serviette.py` (serviette nue calée, ordre d'apparition des lettres, relief des points, plis, grain) :
   on ne retouche pas ces fichiers à la main.
 
 ## Mise en page

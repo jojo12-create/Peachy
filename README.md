@@ -27,9 +27,8 @@ python3 tools/serviette.py                                 # écrit v3/assets/im
 python3 tools/serviette.py --controle                      # ajoute des planches de contrôle dans shots/
 ```
 
-- Le minutage (fenêtre d'apparition de chaque groupe), le nombre de lanières et leur douceur se règlent en tête de `tools/serviette.py`.
-- La disposition (photographie sur écran large, pile verticale sur écran en hauteur) et les plans de caméra
-  sont dans `v3/assets/js/serviette.js`.
+- Le minutage (durée d'apparition des lettres, fondu d'une lettre, arrivée des A, lanières) se règle en tête de `tools/serviette.py`.
+- La disposition (photographie sur écran large, pile verticale sur écran en hauteur) est dans `v3/assets/js/serviette.js`.
 - Pour changer d'images, remplacer les deux originaux (même serviette, même cadrage) et relancer l'outil.
   `PROMPT-HERO.md` donne les prompts pour les régénérer au format du hero.
 - `http://localhost:4173/v3/?instant=6.5` fige l'animation à 6,5 s (contrôle, captures).

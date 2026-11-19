@@ -2,23 +2,21 @@
  * Peachy — la serviette brodée (couverture de la page).
  *
  * 1. La serviette se dépose : elle arrive floue et lisse, ses plis se forment, puis tout s'arrête.
- * 2. La caméra s'approche et la broderie apparaît : de longues lanières douces, éparses, glissent
- *    le long de chaque ligne et la dévoilent par endroits, puis en entier. Une lueur les accompagne.
- *    La caméra va d'un ouvrage à l'autre.
- * 3. La caméra recule : la serviette entière, la bande tissée en bas de l'écran.
+ * 2. La broderie apparaît, sans que rien d'autre ne bouge : les lettres surgissent une à une,
+ *    éparses, d'un mot à l'autre, chacune dans un léger flou qui se précise. Aucun A d'abord :
+ *    les A viennent en dernier, dévoilés par de fines lanières.
  *
  * Le fil brodé est celui de la photographie. Chaque mot est une pièce : sur un écran large elle
  * reste à sa place ; sur un écran en hauteur, les mots s'empilent sur toute la hauteur, et chaque
  * pièce prend la lumière et l'ondulation des plis où elle se pose. Seul l'instant où chaque
- * lanière passe est calculé (tools/serviette.py).
+ * lettre apparaît est calculé (tools/serviette.py).
  * Sans WebGL 2 ou sans script, l'image brodée s'affiche telle quelle.
  */
 import { serviette as D } from "./serviette-donnees.js";
 
 const IMAGES = "assets/img/serviette/";
 const POSE = 2.4; // secondes : la serviette se dépose
-const SILENCE = 0.4; // la serviette est immobile ; la caméra commence à s'approcher
-const RECUL = 1.7; // retour au plan d'ensemble après le dernier point
+const SILENCE = 0.5; // la serviette est immobile, rien n'est encore brodé
 const HATE = 7; // vitesse de la suite quand la personne commence à défiler
 const PIECES = 14; // nombre maximal de pièces brodées
 
@@ -46,7 +44,8 @@ uniform vec3 uMoyenne;       // teinte moyenne de la serviette
 uniform float uPose;         // 0 → 1 : la serviette se dépose
 uniform float uFil;          // 0 → 1 : avancée de la couture
 uniform float uDuree;        // durée de l'apparition, en secondes
-uniform float uDouceur;      // fondu de la pointe d'une lanière, en secondes
+uniform float uFondu;        // fondu d'une lettre, du flou au net, en secondes
+uniform float uDouceur;      // fondu de la pointe d'une lanière (les A), en secondes
 uniform vec4 uSurvol;        // centre et demi-côtés du groupe survolé
 uniform vec2 uSurvolAngle;   // cos, sin de son inclinaison
 uniform float uSurvolForce;
@@ -99,8 +98,7 @@ void main() {
   // ── La couture : la carte dit à quel instant chaque point de broderie est posé ──
   if (uFil > 0.0) {
     ivec2 limite = ivec2(uTaille) - 1;
-    float net = uDouceur / uDuree;
-    float cousu = 0.0, frais = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0, lueur = 0.0;
+    float cousu = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0, flouLettre = 0.0;
     vec2 ou = vec2(0.0);
     // une pièce déplacée épouse les plis où elle se pose
     vec2 ondule = p + pente * 650.0;
@@ -112,40 +110,40 @@ void main() {
       vec2 t = q - 0.5;
       vec2 f = fract(t);
       ivec2 i = ivec2(floor(t));
-      float c1 = 0.0, f1 = 0.0, a1 = 0.0, l1 = 0.0;
+      float c1 = 0.0, a1 = 0.0, v1 = 0.0, p1 = 0.0;
       for (int k = 0; k < 4; k++) {
         ivec2 o = ivec2(k & 1, k >> 1);
         ivec2 xy = clamp(i + o, ivec2(0), limite);
+        // numéro du groupe ; la partie décimale signale un A
         float groupe = texelFetch(uPoints, xy, 0).b * 255.0 / 20.0;
         if (abs(groupe - uInfo[n].x) > 0.5) continue;
+        float net = (fract(groupe + 0.1) > 0.3 ? uDouceur : uFondu) / uDuree;
         vec4 m = texelFetch(uCarte, xy, 0);
         float instant = (m.r * 255.0 * 256.0 + m.g * 255.0) / 65535.0;
         float poids = (o.x == 1 ? f.x : 1.0 - f.x) * (o.y == 1 ? f.y : 1.0 - f.y);
         // en place, le fil garde l'ombre large de la photo ; déplacé, seulement son ombre proche
         float emprise = mix(m.b, smoothstep(0.3, 0.92, m.b), bouge);
-        float pose_ = smoothstep(instant, instant + net, uFil) * emprise;
-        c1 += poids * pose_;
-        // le fil reste un instant plus clair après le passage de la lanière
-        f1 += poids * pose_ * exp(-max(0.0, uFil - instant - net) * uDuree / 0.9);
-        // la lueur de la lanière : elle précède à peine le fil, puis s'éteint
-        float passe = (uFil - instant) * uDuree;
-        l1 += poids * m.b * exp(-passe * passe / (passe < 0.0 ? 0.012 : 0.09)) * step(0.0005, instant);
+        float venue = clamp((uFil - instant) / net, 0.0, 1.0);
+        c1 += poids * smoothstep(0.0, 1.0, venue) * emprise;
+        // la lettre arrive floue, puis se précise
+        v1 += poids * (1.0 - venue);
+        p1 += poids;
         a1 += poids * fract(sin(float(xy.x) * 12.9898 + float(xy.y) * 78.233) * 43758.5);
       }
       // fondu sur les bords de la boîte : une pièce coupée court ne laisse pas d'arête
       vec2 dBord = min(q - uBoite[n].xy, uBoite[n].zw - q);
       float doux = smoothstep(0.0, 4.0, min(dBord.x, dBord.y));
-      c1 *= doux; f1 *= doux;
-      lueur = max(lueur, l1 * doux);
+      c1 *= doux;
       if (c1 > cousu) {
-        cousu = c1; frais = f1; alea = a1 - 0.5; ou = q; deplace = bouge;
+        cousu = c1; alea = a1 - 0.5; ou = q; deplace = bouge;
+        flouLettre = v1 / max(p1, 0.001);
         grossi = length(uMat[n].xy);
       }
     }
     if (cousu > 0.0) {
       vec2 uq = ou / uTaille;
       // netteté choisie d'après la taille réelle de la pièce à l'écran
-      vec3 brodee = textureLod(uBrodee, uq, max(0.0, log2(grain_ecran * grossi))).rgb;
+      vec3 brodee = textureLod(uBrodee, uq, max(0.0, log2(grain_ecran * grossi)) + 2.4 * flouLettre).rgb;
       float fil = smoothstep(0.07, 0.19, brodee.r - brodee.b) * cousu;
       // la pièce déplacée prend la lumière des plis où elle se pose
       brodee *= mix(vec3(1.0), plis / max(texture(uPlis, versPlis(ou)).rgb, vec3(0.05)), deplace);
@@ -153,9 +151,7 @@ void main() {
 
       // Les points de broderie : de petites barres de fil bombées, un creux entre deux.
       float bombe = texture(uPoints, uq).r * 2.0 - 1.0;   // +1 au milieu du point, −1 dans le creux
-      c *= 1.0 + fil * (bombe * 0.11 + alea * 0.06);
-      // le fil qui vient d'apparaître est un peu plus clair, puis prend sa teinte
-      c += vec3(0.10, 0.07, 0.045) * fil * frais;
+      c *= 1.0 + fil * (bombe * 0.11 + alea * 0.06) * (1.0 - flouLettre);
 
       // survol d'une catégorie : son fil fonce légèrement
       vec2 r = p - uSurvol.xy;
@@ -163,8 +159,6 @@ void main() {
       float dedans = step(abs(r.x), uSurvol.z) * step(abs(r.y), uSurvol.w);
       c = mix(c, c * vec3(0.78, 0.72, 0.68), fil * dedans * uSurvolForce);
     }
-    // La lanière elle-même : une lumière douce qui effleure l'éponge là où elle passe.
-    c += vec3(0.062, 0.051, 0.041) * lueur;
   }
 
   // ── Lumière : lisse et claire en l'air, les plis se creusent en se posant ──
@@ -177,26 +171,6 @@ void main() {
 }`;
 
 const borner = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-const melanger = (a, b, k) => a + (b - a) * k;
-const adoucir = (x) => x * x * (3 - 2 * x);
-
-// Courbe des mouvements de caméra : une entrée et une sortie douces (easeInOutSine,
-// cubic-bezier(0.37, 0, 0.63, 1)). Tout l'écran bouge : la courbe des déplacements de
-// l'interface (--ease-in-out) y donnerait un à-coup.
-function courbe(x1, y1, x2, y2) {
-  const bez = (a, b, s) => 3 * a * s * (1 - s) * (1 - s) + 3 * b * s * s * (1 - s) + s * s * s;
-  return (x) => {
-    if (x <= 0 || x >= 1) return borner(x);
-    let a = 0, b = 1, s = x;
-    for (let i = 0; i < 18; i++) {
-      s = (a + b) / 2;
-      if (bez(x1, x2, s) < x) a = s;
-      else b = s;
-    }
-    return bez(y1, y2, s);
-  };
-}
-const glisser = courbe(0.37, 0, 0.63, 1);
 
 const reunir = (boites) => [
   Math.min(...boites.map((b) => b[0])), Math.min(...boites.map((b) => b[1])),
@@ -232,8 +206,6 @@ export function serviette() {
   const arret = parametres.has("instant") ? Number(parametres.get("instant")) : null;
   const liens = [...section.querySelectorAll("[data-groupe]")];
   const groupes = new Map(D.groupes.map((g, i) => [g.nom, { ...g, rang: i + 1 }]));
-  const debut = (nom) => groupes.get(nom).debut;
-  const fin = (nom) => groupes.get(nom).debut + groupes.get(nom).duree;
 
   // ── Programme ──
   const compiler = (type, source) => {
@@ -285,8 +257,6 @@ export function serviette() {
   let ecran = { l: 1, h: 1 };
   let ensemble = { cx: 0, cy: 0, largeur: 1 };
   let pieces = [];
-  let plans = [];
-  let passages = [];
   let cadres = new Map(); // où se trouve chaque groupe sur la serviette : { cx, cy, l, h, angle, boite }
 
   const poser = (pc, x, y) => {
@@ -408,7 +378,7 @@ export function serviette() {
       }
     }
 
-    // Où se trouve chaque groupe sur la serviette (liens, survol, plans de caméra).
+    // Où se trouve chaque groupe sur la serviette (liens, survol).
     cadres = new Map();
     for (const g of groupes.values()) {
       const miennes = pieces.filter((pc) => pc.g === g);
@@ -421,59 +391,6 @@ export function serviette() {
         h: seule ? g.cadre.h * seule.echelle : boiteG[3] - boiteG[1],
         angle: seule ? g.cadre.angle + (seule.angle * 180) / Math.PI : 0,
       });
-    }
-
-    // ── Les plans de caméra ──
-    // Jusqu'où s'approcher : assez pour lire le fil, sans trop agrandir l'image.
-    const zoomMax = empile ? 1.32 : borner(1.55 / echelle, 1.3, 2.7);
-    const largeurMin = ensemble.largeur / zoomMax;
-    const plan = (noms, remplissage, derive, lignesDe) => {
-      const b = reunir(lignesDe ?? noms.map((n) => cadres.get(n).boite));
-      const lb = b[2] - b[0], hb = b[3] - b[1];
-      const largeur = Math.min(ensemble.largeur, Math.max(largeurMin, lb / remplissage, hb / 0.6 / haut));
-      // Chaque plan dérive lentement dans le sens de son ouvrage : la caméra ne s'arrête jamais net.
-      // Si l'ouvrage est plus large que le cadre, elle le parcourt de gauche à droite.
-      const course = Math.max(derive[0] * largeur, (lb - 0.86 * largeur) / 2);
-      return { cx: (b[0] + b[2]) / 2, cy: (b[1] + b[3]) / 2, largeur, dx: course, dy: derive[1] * largeur * haut };
-    };
-    const categories = ["maison", "rituels", "drainage", "philosophie", "univers"];
-    const large = { ...ensemble, dx: 0, dy: 0 };
-    if (!empile) {
-      plans = [
-        large,
-        plan(["devise-1", "devise-2"], 0.8, [0.03, 0]),
-        plan(["trait", ...categories], 0.88, [0.012, 0.045]),
-        plan(["peachy"], 0.8, [0.035, -0.01]),
-        plan(["peachy", "lymphatic"], 0.74, [0.01, 0.02]),
-        large,
-      ];
-      // Les passages d'un plan au suivant, en secondes de couture : [départ, arrivée].
-      // La caméra part avant que l'ouvrage en cours soit fini et arrive quand le suivant commence.
-      passages = [
-        [-SILENCE - 0.05, 1.25],
-        [debut("trait") - 0.45, debut("maison") + 0.75],
-        [fin("univers") - 0.9, debut("peachy") + 0.5],
-        [debut("lymphatic") - 0.35, debut("lymphatic") + 0.85],
-        [D.duree + 0.1, D.duree + 0.1 + RECUL],
-      ];
-    } else {
-      // Pile verticale : la caméra descend avec la couture, de la devise à la bande.
-      const lignesListe = pieces.filter((pc) => categories.includes(pc.g.nom)).map(emprise);
-      plans = [
-        large,
-        plan(["devise-1", "devise-2"], 1.3, [0.02, 0]),
-        plan(null, 0.95, [0, 0.02], [cadres.get("trait").boite, ...lignesListe.slice(0, 3)]),
-        plan(null, 0.95, [0, 0.03], lignesListe.slice(3)),
-        plan(["peachy", "lymphatic"], 0.89, [0.01, 0]),
-        large,
-      ];
-      passages = [
-        [-SILENCE - 0.05, 1.2],
-        [debut("trait") - 0.45, debut("maison") + 0.7],
-        [debut("drainage") + 0.15, debut("philosophie") + 0.75],
-        [fin("univers") - 0.75, debut("peachy") + 0.55],
-        [D.duree + 0.1, D.duree + 0.1 + RECUL],
-      ];
     }
 
     // Les pièces, pour le dessin.
@@ -496,34 +413,6 @@ export function serviette() {
     placerLiens();
   }
 
-  // La vue à un instant de la couture. Fonction pure du temps : chaque image se recalcule seule.
-  function camera(tau) {
-    const vue = (i) => {
-      // dérive du plan, du début du passage qui y mène à la fin de celui qui en repart
-      const a = i ? passages[i - 1][0] : -Infinity, b = i < passages.length ? passages[i][1] : Infinity;
-      const k = Number.isFinite(a) && Number.isFinite(b) ? adoucir(borner((tau - a) / (b - a))) * 2 - 1 : 0;
-      const p = plans[i];
-      return { cx: p.cx + p.dx * k, cy: p.cy + p.dy * k, largeur: p.largeur };
-    };
-    let v = vue(0);
-    for (let i = 0; i < passages.length; i++) {
-      const [a, b] = passages[i];
-      if (tau <= a) break;
-      const k = glisser((tau - a) / (b - a));
-      const d = vue(i + 1);
-      // sur un long trajet entre deux plans rapprochés, la caméra prend un peu de recul en chemin
-      const trajet = Math.hypot(d.cx - v.cx, d.cy - v.cy) / ((v.largeur + d.largeur) / 2);
-      const entreDeux = i > 0 && i < passages.length - 1 ? 1 : 0;
-      const recul = 1 + 0.16 * Math.sin(Math.PI * k) * borner(trajet * 1.4 - 0.3) * entreDeux;
-      v = {
-        cx: melanger(v.cx, d.cx, k),
-        cy: melanger(v.cy, d.cy, k),
-        largeur: Math.exp(melanger(Math.log(v.largeur), Math.log(d.largeur), k)) * recul,
-      };
-    }
-    return v;
-  }
-
   // Les catégories brodées sont des liens : chacun est posé sur son mot, incliné comme lui.
   function placerLiens() {
     const echelle = ecran.l / ensemble.largeur;
@@ -540,7 +429,7 @@ export function serviette() {
 
   // ── Temps ──
   // t : secondes depuis le début de la pose. La broderie commence à apparaître après POSE + SILENCE.
-  const total = () => POSE + SILENCE + D.duree + 0.1 + RECUL;
+  const total = () => POSE + SILENCE + D.duree + 0.15;
   let t = 0;
   let vitesse = 1;
   let pret = false;
@@ -557,7 +446,7 @@ export function serviette() {
     gl.viewport(0, 0, l, h);
     const pose = borner(t / POSE);
     const tau = t - POSE - SILENCE;
-    const vue = t >= total() ? ensemble : camera(tau);
+    const vue = ensemble; // la caméra ne bouge pas : seule la broderie apparaît
     // en l'air, la serviette est plus près de nous, légèrement tournée
     const chute = Math.pow(1 - pose, 2.2);
     const demiX = (vue.largeur / 2) / (1 + 0.16 * chute);
@@ -583,7 +472,7 @@ export function serviette() {
     if (nouvel === affiche) return;
     affiche = nouvel;
     section.dataset.etat = nouvel;
-    // les liens sont posés sur le plan d'ensemble : ils ne s'activent qu'une fois la caméra revenue
+    // les liens s'activent quand toute la broderie est là
     for (const a of liens) a.toggleAttribute("data-cousu", nouvel === "cousu");
   }
 
@@ -628,6 +517,7 @@ export function serviette() {
       gl.uniform3f(u.uMarges, D.margeHaut, D.margeBas, D.margeCote);
       gl.uniform3f(u.uMoyenne, ...D.moyenne);
       gl.uniform1f(u.uDuree, D.duree);
+      gl.uniform1f(u.uFondu, D.fondu);
       gl.uniform1f(u.uDouceur, D.douceur);
       gl.uniform4f(u.uSurvol, 0, 0, 0, 0);
       gl.uniform2f(u.uSurvolAngle, 1, 0);
@@ -642,7 +532,7 @@ export function serviette() {
           etat();
         };
         aller(arret);
-        window.serviette = { aller, total, vue: (instant) => camera(instant - POSE - SILENCE) };
+        window.serviette = { aller, total };
       } else if (calme.matches || navigation === "back_forward" || scrollY > innerHeight * 0.5) {
         // mouvement réduit, retour arrière, arrivée plus bas dans la page : la serviette est déjà brodée
         terminer();
