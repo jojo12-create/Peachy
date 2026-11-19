@@ -2,9 +2,10 @@
  * Peachy — la serviette brodée (couverture de la page).
  *
  * 1. La serviette se dépose : elle arrive floue et lisse, ses plis se forment, puis tout s'arrête.
- * 2. La broderie apparaît, sans que rien d'autre ne bouge : les lettres surgissent une à une,
- *    éparses, d'un mot à l'autre, chacune dans un léger flou qui se précise. Aucun A d'abord :
- *    les A viennent en dernier, dévoilés par de fines lanières.
+ * 2. La caméra s'approche et la broderie apparaît là où elle regarde : chaque ligne se dévoile de
+ *    gauche à droite, les lettres sortent du vide dans un flou qui se précise lentement. La caméra
+ *    passe de la devise aux catégories, puis au logo. Aucun A d'abord.
+ * 3. La caméra recule : les A viennent en dernier, dévoilés par de fines lanières.
  *
  * Le fil brodé est celui de la photographie. Chaque mot est une pièce : sur un écran large elle
  * reste à sa place ; sur un écran en hauteur, les mots s'empilent sur toute la hauteur, et chaque
@@ -16,7 +17,7 @@ import { serviette as D } from "./serviette-donnees.js";
 
 const IMAGES = "assets/img/serviette/";
 const POSE = 2.4; // secondes : la serviette se dépose
-const SILENCE = 0.5; // la serviette est immobile, rien n'est encore brodé
+const SILENCE = 0.45; // la serviette est immobile ; la caméra commence à s'approcher
 const HATE = 7; // vitesse de la suite quand la personne commence à défiler
 const PIECES = 14; // nombre maximal de pièces brodées
 
@@ -98,7 +99,7 @@ void main() {
   // ── La couture : la carte dit à quel instant chaque point de broderie est posé ──
   if (uFil > 0.0) {
     ivec2 limite = ivec2(uTaille) - 1;
-    float cousu = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0, flouLettre = 0.0;
+    float cousu = 0.0, alea = 0.0, deplace = 0.0, grossi = 1.0, flouLettre = 0.0, dore = 0.0, eclat = 0.0, age = 0.0;
     vec2 ou = vec2(0.0);
     // une pièce déplacée épouse les plis où elle se pose
     vec2 ondule = p + pente * 650.0;
@@ -110,23 +111,31 @@ void main() {
       vec2 t = q - 0.5;
       vec2 f = fract(t);
       ivec2 i = ivec2(floor(t));
-      float c1 = 0.0, a1 = 0.0, v1 = 0.0, p1 = 0.0;
+      float c1 = 0.0, a1 = 0.0, v1 = 0.0, p1 = 0.0, d1 = 0.0, e1 = 0.0, g1 = 0.0;
       for (int k = 0; k < 4; k++) {
         ivec2 o = ivec2(k & 1, k >> 1);
         ivec2 xy = clamp(i + o, ivec2(0), limite);
-        // numéro du groupe ; la partie décimale signale un A
-        float groupe = texelFetch(uPoints, xy, 0).b * 255.0 / 20.0;
+        // numéro du groupe ; la partie décimale signale un A (0,4) ou le A du logo (0,7)
+        float brut = texelFetch(uPoints, xy, 0).b * 255.0 / 20.0;
+        float groupe = floor(brut + 0.05), marque = brut - groupe;
         if (abs(groupe - uInfo[n].x) > 0.5) continue;
-        float net = (fract(groupe + 0.1) > 0.3 ? uDouceur : uFondu) / uDuree;
+        float net = (marque > 0.3 ? uDouceur : uFondu) / uDuree;
         vec4 m = texelFetch(uCarte, xy, 0);
         float instant = (m.r * 255.0 * 256.0 + m.g * 255.0) / 65535.0;
         float poids = (o.x == 1 ? f.x : 1.0 - f.x) * (o.y == 1 ? f.y : 1.0 - f.y);
         // en place, le fil garde l'ombre large de la photo ; déplacé, seulement son ombre proche
         float emprise = mix(m.b, smoothstep(0.3, 0.92, m.b), bouge);
         float venue = clamp((uFil - instant) / net, 0.0, 1.0);
-        c1 += poids * smoothstep(0.0, 1.0, venue) * emprise;
-        // la lettre arrive floue, puis se précise
-        v1 += poids * (1.0 - venue);
+        // la lettre sort du vide : elle prend corps lentement, et son flou se dissipe avant qu'elle soit pleine
+        float corps = venue * venue * venue * (venue * (venue * 6.0 - 15.0) + 10.0);
+        c1 += poids * corps * emprise;
+        v1 += poids * pow(1.0 - venue, 1.6);
+        // les A : un reflet doré à leur venue, qui s'éteint ; celui du logo le garde et scintille
+        float depuis = max(0.0, (uFil - instant) * uDuree);
+        float lueur = step(0.0001, uFil - instant) * smoothstep(0.0, 0.18, depuis);
+        d1 += poids * lueur * step(0.3, marque) * (marque > 0.6 ? 1.0 - smoothstep(2.4, 3.3, depuis) : exp(-depuis / 0.75));
+        e1 += poids * lueur * step(0.6, marque) * (1.0 - smoothstep(2.2, 3.2, depuis));
+        g1 += poids * depuis;
         p1 += poids;
         a1 += poids * fract(sin(float(xy.x) * 12.9898 + float(xy.y) * 78.233) * 43758.5);
       }
@@ -137,13 +146,14 @@ void main() {
       if (c1 > cousu) {
         cousu = c1; alea = a1 - 0.5; ou = q; deplace = bouge;
         flouLettre = v1 / max(p1, 0.001);
+        dore = d1; eclat = e1; age = g1 / max(p1, 0.001);
         grossi = length(uMat[n].xy);
       }
     }
     if (cousu > 0.0) {
       vec2 uq = ou / uTaille;
       // netteté choisie d'après la taille réelle de la pièce à l'écran
-      vec3 brodee = textureLod(uBrodee, uq, max(0.0, log2(grain_ecran * grossi)) + 2.4 * flouLettre).rgb;
+      vec3 brodee = textureLod(uBrodee, uq, max(0.0, log2(grain_ecran * grossi)) + 3.2 * flouLettre).rgb;
       float fil = smoothstep(0.07, 0.19, brodee.r - brodee.b) * cousu;
       // la pièce déplacée prend la lumière des plis où elle se pose
       brodee *= mix(vec3(1.0), plis / max(texture(uPlis, versPlis(ou)).rgb, vec3(0.05)), deplace);
@@ -152,6 +162,17 @@ void main() {
       // Les points de broderie : de petites barres de fil bombées, un creux entre deux.
       float bombe = texture(uPoints, uq).r * 2.0 - 1.0;   // +1 au milieu du point, −1 dans le creux
       c *= 1.0 + fil * (bombe * 0.11 + alea * 0.06) * (1.0 - flouLettre);
+
+      // Le doré des A : mat, le chocolat du fil tiré vers l'or, sans aucun éclat de lumière.
+      // Sur le A du logo, de petits points passent doucement du chocolat à ce doré, puis s'éteignent.
+      vec2 grainOr = floor(ou / 3.0);
+      float hasard = fract(sin(dot(grainOr, vec2(12.9898, 78.233))) * 43758.5);
+      float rond = smoothstep(0.55, 0.12, length(fract(ou / 3.0) - 0.5));
+      float clin = pow(0.5 + 0.5 * sin(age * (3.0 + 4.0 * hasard) + hasard * 40.0), 6.0) * rond;
+      // même relief que le fil, à peine plus clair, teinte chocolat doré ; les hautes lumières sont retenues
+      vec3 orMat = vec3(0.60, 0.44, 0.265) * min(clair(c) / 0.46, 1.25);
+      c = mix(c, orMat, fil * dore * 0.8);
+      c = mix(c, orMat * 1.05, fil * eclat * clin * 0.5);
 
       // survol d'une catégorie : son fil fonce légèrement
       vec2 r = p - uSurvol.xy;
@@ -171,6 +192,27 @@ void main() {
 }`;
 
 const borner = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+
+const melanger = (a, b, k) => a + (b - a) * k;
+const adoucir = (x) => x * x * (3 - 2 * x);
+
+// Courbe des mouvements de caméra : une entrée et une sortie douces (easeInOutSine,
+// cubic-bezier(0.37, 0, 0.63, 1)). Tout l'écran bouge : la courbe des déplacements de
+// l'interface (--ease-in-out) y donnerait un à-coup.
+function courbe(x1, y1, x2, y2) {
+  const bez = (a, b, s) => 3 * a * s * (1 - s) * (1 - s) + 3 * b * s * s * (1 - s) + s * s * s;
+  return (x) => {
+    if (x <= 0 || x >= 1) return borner(x);
+    let a = 0, b = 1, s = x;
+    for (let i = 0; i < 18; i++) {
+      s = (a + b) / 2;
+      if (bez(x1, x2, s) < x) a = s;
+      else b = s;
+    }
+    return bez(y1, y2, s);
+  };
+}
+const glisser = courbe(0.37, 0, 0.63, 1);
 
 const reunir = (boites) => [
   Math.min(...boites.map((b) => b[0])), Math.min(...boites.map((b) => b[1])),
@@ -257,6 +299,8 @@ export function serviette() {
   let ecran = { l: 1, h: 1 };
   let ensemble = { cx: 0, cy: 0, largeur: 1 };
   let pieces = [];
+  let plans = [];
+  let passages = [];
   let cadres = new Map(); // où se trouve chaque groupe sur la serviette : { cx, cy, l, h, angle, boite }
 
   const poser = (pc, x, y) => {
@@ -393,6 +437,37 @@ export function serviette() {
       });
     }
 
+    // ── Les plans de caméra ──
+    // Trois plans rapprochés, là où les lettres apparaissent : la devise, les catégories, le logo.
+    // Jusqu'où s'approcher : assez pour lire le fil, sans trop agrandir l'image.
+    const zoomMax = empile ? 1.32 : borner(1.55 / echelle, 1.3, 2.7);
+    const largeurMin = ensemble.largeur / zoomMax;
+    const plan = (noms, remplissage, derive) => {
+      const b = reunir(noms.map((n) => cadres.get(n).boite));
+      const lb = b[2] - b[0], hb = b[3] - b[1];
+      const largeur = Math.min(ensemble.largeur, Math.max(largeurMin, lb / remplissage, hb / 0.62 / haut));
+      // chaque plan dérive lentement : la caméra ne s'arrête jamais net
+      return { cx: (b[0] + b[2]) / 2, cy: (b[1] + b[3]) / 2, largeur, dx: derive[0] * largeur, dy: derive[1] * largeur * haut };
+    };
+    const large = { ...ensemble, dx: 0, dy: 0 };
+    plans = [
+      large,
+      plan(["devise-1", "devise-2"], empile ? 0.95 : 0.8, [0.03, 0]),
+      plan(["trait", "maison", "rituels", "drainage", "philosophie", "univers"], empile ? 0.95 : 0.88, [0.012, 0.035]),
+      plan(["peachy", "lymphatic"], empile ? 0.89 : 0.76, [0.03, 0]),
+      large,
+    ];
+    // Les passages d'un plan au suivant, en secondes : [départ, arrivée]. La caméra part quand les
+    // dernières lettres du plan finissent d'apparaître et arrive quand celles du suivant commencent.
+    // Elle est revenue au plan d'ensemble pour les A, qui apparaissent partout.
+    const [f1, f2, f3] = D.fenetres;
+    passages = [
+      [-SILENCE - 0.05, f1[0] + 1.0],
+      [f1[1] - 0.35, f2[0] + 0.95],
+      [f2[1] - 0.45, f3[0] + 0.75],
+      [f3[1] + 0.1, D.debutA + 1.0],
+    ];
+
     // Les pièces, pour le dessin.
     const boites = new Float32Array(PIECES * 4), ancres = new Float32Array(PIECES * 4);
     const mats = new Float32Array(PIECES * 4), infos = new Float32Array(PIECES * 2);
@@ -411,6 +486,34 @@ export function serviette() {
     gl.uniform4fv(u["uMat[0]"], mats);
     gl.uniform2fv(u["uInfo[0]"], infos);
     placerLiens();
+  }
+
+  // La vue à un instant donné. Fonction pure du temps : chaque image se recalcule seule.
+  function camera(tau) {
+    const vue = (i) => {
+      // dérive du plan, du début du passage qui y mène à la fin de celui qui en repart
+      const a = i ? passages[i - 1][0] : -Infinity, b = i < passages.length ? passages[i][1] : Infinity;
+      const k = Number.isFinite(a) && Number.isFinite(b) ? adoucir(borner((tau - a) / (b - a))) * 2 - 1 : 0;
+      const p = plans[i];
+      return { cx: p.cx + p.dx * k, cy: p.cy + p.dy * k, largeur: p.largeur };
+    };
+    let v = vue(0);
+    for (let i = 0; i < passages.length; i++) {
+      const [a, b] = passages[i];
+      if (tau <= a) break;
+      const k = glisser((tau - a) / (b - a));
+      const d = vue(i + 1);
+      // sur un long trajet entre deux plans rapprochés, la caméra prend un peu de recul en chemin
+      const trajet = Math.hypot(d.cx - v.cx, d.cy - v.cy) / ((v.largeur + d.largeur) / 2);
+      const entreDeux = i > 0 && i < passages.length - 1 ? 1 : 0;
+      const recul = 1 + 0.16 * Math.sin(Math.PI * k) * borner(trajet * 1.4 - 0.3) * entreDeux;
+      v = {
+        cx: melanger(v.cx, d.cx, k),
+        cy: melanger(v.cy, d.cy, k),
+        largeur: Math.exp(melanger(Math.log(v.largeur), Math.log(d.largeur), k)) * recul,
+      };
+    }
+    return v;
   }
 
   // Les catégories brodées sont des liens : chacun est posé sur son mot, incliné comme lui.
@@ -446,7 +549,7 @@ export function serviette() {
     gl.viewport(0, 0, l, h);
     const pose = borner(t / POSE);
     const tau = t - POSE - SILENCE;
-    const vue = ensemble; // la caméra ne bouge pas : seule la broderie apparaît
+    const vue = tau >= D.apparu ? ensemble : camera(tau);
     // en l'air, la serviette est plus près de nous, légèrement tournée
     const chute = Math.pow(1 - pose, 2.2);
     const demiX = (vue.largeur / 2) / (1 + 0.16 * chute);
@@ -468,11 +571,12 @@ export function serviette() {
   // L'état de la section ne s'écrit dans la page que lorsqu'il change.
   let affiche = null;
   function etat() {
-    const nouvel = t >= total() ? "cousu" : t > POSE + SILENCE ? "couture" : "pose";
+    // tout est apparu et la caméra est revenue : la couverture est prête, même si le A du logo scintille encore
+    const nouvel = t >= POSE + SILENCE + D.apparu ? "cousu" : t > POSE + SILENCE ? "couture" : "pose";
     if (nouvel === affiche) return;
     affiche = nouvel;
     section.dataset.etat = nouvel;
-    // les liens s'activent quand toute la broderie est là
+    // les liens sont posés sur le plan d'ensemble : ils s'activent quand la caméra y est revenue et que tout est brodé
     for (const a of liens) a.toggleAttribute("data-cousu", nouvel === "cousu");
   }
 
@@ -532,7 +636,7 @@ export function serviette() {
           etat();
         };
         aller(arret);
-        window.serviette = { aller, total };
+        window.serviette = { aller, total, vue: (instant) => camera(instant - POSE - SILENCE) };
       } else if (calme.matches || navigation === "back_forward" || scrollY > innerHeight * 0.5) {
         // mouvement réduit, retour arrière, arrivée plus bas dans la page : la serviette est déjà brodée
         terminer();

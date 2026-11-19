@@ -28,7 +28,9 @@ python3 tools/serviette.py --controle                      # ajoute des planches
 ```
 
 - Le minutage (durée d'apparition des lettres, fondu d'une lettre, arrivée des A, lanières) se règle en tête de `tools/serviette.py`.
-- La disposition (photographie sur écran large, pile verticale sur écran en hauteur) est dans `v3/assets/js/serviette.js`.
+- La disposition (photographie sur écran large, pile verticale sur écran en hauteur) et les plans de caméra
+  sont dans `v3/assets/js/serviette.js`.
+- `videos/` contient un enregistrement de la couverture, sur ordinateur et sur téléphone.
 - Pour changer d'images, remplacer les deux originaux (même serviette, même cadrage) et relancer l'outil.
   `PROMPT-HERO.md` donne les prompts pour les régénérer au format du hero.
 - `http://localhost:4173/v3/?instant=6.5` fige l'animation à 6,5 s (contrôle, captures).
