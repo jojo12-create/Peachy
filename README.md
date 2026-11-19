@@ -27,7 +27,9 @@ python3 tools/serviette.py                                 # écrit v3/assets/im
 python3 tools/serviette.py --controle                      # ajoute des planches de contrôle dans shots/
 ```
 
-- Le minutage de la couture (ordre des groupes, début, durée) se règle en tête de `tools/serviette.py`.
+- Le minutage de la couture (fenêtre de chaque groupe, nombre d'aiguilles, longueur d'un point) se règle en tête de `tools/serviette.py`.
+- La disposition (photographie sur écran large, pile verticale sur écran en hauteur), les plans de caméra et les arcs de fil
+  sont dans `v3/assets/js/serviette.js`.
 - Pour changer d'images, remplacer les deux originaux (même serviette, même cadrage) et relancer l'outil.
   `PROMPT-HERO.md` donne les prompts pour les régénérer au format du hero.
 - `http://localhost:4173/v3/?instant=6.5` fige l'animation à 6,5 s (contrôle, captures).

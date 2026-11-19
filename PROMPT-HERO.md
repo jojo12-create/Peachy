@@ -46,7 +46,8 @@ band and corded edges, same light, same colour, same sharpness. Same size and as
 
 ## 3. Version téléphone (9:16)
 
-Sur un téléphone tenu droit, la composition large devient minuscule. Une image verticale la remplace.
+Facultatif : sur un téléphone, le site recompose déjà lui-même les mots brodés en pile verticale à partir de
+l'image large. Une vraie image verticale donnerait seulement des lettres plus nettes de près.
 
 ```
 Use the attached image as the exact reference for the towel, the light, the thread and the typeface.

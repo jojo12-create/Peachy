@@ -102,16 +102,35 @@ Les règles ci-dessus (logo gravé dans le papier) restent celles de la racine e
 - Les deux images (`photos/originaux/serviette-brodee.jpg`, `serviette-nue.jpg`) ont été fournies pour cette couverture :
   c'est la seule exception à la règle « seules les vraies photographies de Peachy ».
   <!-- 2026-11-19 : images de la serviette fournies avec la demande « pour que cette image devienne le hero » -->
-- **Les catégories brodées sont la navigation** de la couverture : chaque mot est un lien, actif dès qu'il est cousu.
-  La barre n'apparaît qu'en quittant la couverture, comme avant.
-- **La broderie n'est jamais coupée.** Le cadrage montre toujours tout ce qui est brodé ; si l'écran est plus haut ou plus
-  large que l'image, la serviette se prolonge (éponge et plis continués, jamais de flou ni de miroir).
-- **Petit écran** : les lettres seraient trop petites en plan d'ensemble. La caméra reste près du fil pendant la couture,
-  puis recule pour montrer la serviette entière.
+- **Ça se coud, ça ne s'imprime pas.** La broderie n'avance pas lettre après lettre : chaque ligne est confiée à
+  plusieurs aiguilles qui cousent des morceaux de lettres dans un ordre mêlé, point après point. Le relief des points
+  reste visible, un peu exagéré, surtout sur le fil qui vient d'être posé.
+  <!-- 2026-11-19 : « La couture ça ressemble plus aux lettres qui s'impriment. Je veux vrmt que ça se couse. Ça peut aussi se coudre de manière sporadique. Pas forcément lettre après lettre ou alors dans une même lettre à des endroits différents. […] J'aimerais voir les fils de couture aussi. Exagérés un peu. » -->
+- **Le fil sort de la serviette, en arcs.** Pas de fil qui tombe du haut de l'écran : une petite boucle accompagne le
+  dernier point, et d'un morceau au suivant le fil s'élance en arc de cercle puis replonge dans le linge, avec son ombre.
+  <!-- 2026-11-19 : « Les coutures je veux des sortes d'arc de cercle qui font pop les coutures, des arcs de cercles de fils. Là ils tombent du ciel alors qu'ils devraient apparaître discrètement et élégamment de la serviette elle-même » -->
+- **La caméra suit la couture, sur tous les écrans.** Une fois la serviette immobile, elle s'approche de ce qui se coud,
+  passe d'un ouvrage au suivant (léger recul en chemin), puis revient au plan d'ensemble. Mouvements longs, courbe douce
+  à l'entrée et à la sortie (easeInOutSine), jamais d'arrêt net : chaque plan dérive lentement.
+  <!-- 2026-11-19 : « J'aimerais que sur ordi ou mobile, après que la serviette s'est figée, la caméra zoom sur ce qui est en train de se coudre. Puis se déplace, dezoom, zoom, déplace au bon vouloir de chaque couture. Il faut que ça soit fluide, pas saccadé, harmonieux. » -->
+- **La bande tissée est toujours vers le bas de l'écran**, le logo dedans. Si l'écran est plus haut que l'image,
+  la serviette se prolonge vers le haut (éponge et plis continués, jamais de flou ni de miroir).
+  <!-- 2026-11-19 : « après le dernier dezoom on est trop loin c'est pas jolie. Le bandeau doit toujours se trouver vers le bas de la page. » -->
+- **Écran en hauteur (téléphone, tablette droite) : les menus brodés s'empilent** sur toute la hauteur, agrandis jusqu'à
+  occuper la largeur : la devise, le trait couché en filet, puis une catégorie par ligne (« Le drainage / lymphatique »
+  sur deux). Le logo et la serviette ne changent pas. Chaque mot déplacé prend la lumière et l'ondulation des plis où il se pose.
+  Écran large : la disposition de la photographie.
+  <!-- 2026-11-19 : « Trouve une autre disposition des menus sauf le logo laisse-le dans la bande, et serviette garde comme ça, juste les menus cousus change de dispo pour que ça prenne plus l'écran et toute la verticalité. » -->
+- **Rythme** : pose 2,4 s, couture 7,7 s, retour au plan d'ensemble 1,7 s.
+  <!-- 2026-11-19 : « Accélère un peu les coutures et donc les animations qui vont avec » -->
+- **Les catégories brodées sont la navigation** de la couverture : chaque mot est un lien, actif une fois la caméra
+  revenue au plan d'ensemble. La barre n'apparaît qu'en quittant la couverture, comme avant.
+- **La broderie n'est jamais coupée** dans le plan d'ensemble.
 - **Rien ne retient la personne** : dès qu'elle défile, la couture se hâte ; au retour arrière ou en mouvement réduit,
   la serviette est déjà brodée.
 - Le fil a sa couleur (`--fil`), le linge la sienne (`--linge`). L'invitation à descendre est cousue du même fil.
-- Tout sort de `tools/serviette.py` (serviette nue calée, carte de couture, plis, grain) : on ne retouche pas ces fichiers à la main.
+- Tout sort de `tools/serviette.py` (serviette nue calée, carte de couture, trajets des aiguilles, plis, grain) :
+  on ne retouche pas ces fichiers à la main.
 
 ## Mise en page
 

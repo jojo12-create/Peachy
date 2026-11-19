@@ -111,7 +111,7 @@
 
     <main id="contenu">
       <!-- ══ Couverture : la serviette brodée ═══════════════════════════ -->
-      <!-- La serviette se dépose, puis la broderie se coud (assets/js/serviette.js).
+      <!-- La serviette se dépose, puis la broderie se coud, fils apparents (assets/js/serviette.js).
            Les catégories brodées sont de vrais liens, posés sur leurs mots.
            Sans script ni WebGL 2, l'image brodée s'affiche telle quelle. -->
       <section class="serviette" id="accueil" data-tone="light">
@@ -119,6 +119,7 @@
         <p class="sr">L’art de prendre soin de soi.</p>
         <img class="serviette__image" src="assets/img/serviette/serviette-brodee.webp" width="1448" height="1011" alt="" decoding="async">
         <canvas class="serviette__toile" aria-hidden="true"></canvas>
+        <canvas class="serviette__fils" aria-hidden="true"></canvas>
         <nav class="serviette__liens" aria-label="Catégories brodées">
           <a href="#philosophie" data-groupe="maison"><span class="sr">La maison</span></a>
           <a href="#rituels" data-groupe="rituels"><span class="sr">Les rituels</span></a>

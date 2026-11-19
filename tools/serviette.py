@@ -13,8 +13,9 @@ fabrique tout ce dont l'animation a besoin :
 
   serviette-brodee.webp   l'image brodée, telle quelle
   serviette-nue.webp      la serviette nue, calée au pixel sur l'image brodée, prolongée sur les côtés
-  couture.png             carte de couture : R,V = instant où le fil arrive (16 bits),
+  couture.png             carte de couture : R,V = instant où le point est posé (16 bits),
                           B = emprise du fil et de son ombre (fondu vers la serviette nue)
+  points.png              relief des points de broderie : R,V = position dans le point, B = numéro du groupe
   plis.webp               lumière des plis (basse fréquence), prolongée au-dessus et en dessous
   eponge.png              grain de bouclette raccordable, pour prolonger la serviette
   assets/js/serviette-donnees.js   mesures, groupes, minutage
@@ -46,8 +47,8 @@ SHOTS = ROOT / "shots"
 
 # Prolongement de la serviette autour de l'image (pixels image), pour les écrans plus hauts
 # ou plus larges qu'elle.
-MARGE_HAUT = 1100
-MARGE_BAS = 1100
+MARGE_HAUT = 2000         # la bande tissée reste en bas de l'écran : la serviette se prolonge surtout vers le haut
+MARGE_BAS = 1000
 MARGE_COTE = 256          # prolongement à gauche et à droite, pour les écrans très larges
 ECHELLE_PLIS = 4          # la lumière des plis est stockée au quart de la définition
 SIGMA_PLIS = 14.0
@@ -57,20 +58,27 @@ TUILE = 512               # côté du grain de bouclette
 # Dans l'ordre où ils se cousent. Les lignes sont reconnues d'elles-mêmes dans l'image :
 #   gauche / droite : lignes de texte de part et d'autre du trait vertical, de haut en bas ;
 #   trait : le trait vertical ; grand : les grandes lettres du logo ; dessous : la ligne sous le logo.
-# debut / duree : minutage de la couture, en secondes après la pose de la serviette.
+# debut / duree : fenêtre de couture du groupe, en secondes après la pose de la serviette.
+# aiguilles : nombre d'aiguilles qui y travaillent en même temps.
 # lien : ancre du chapitre (les catégories brodées servent de navigation).
 GROUPES = [
-    dict(nom="devise-1", texte="L’art de prendre", cote="gauche", debut=0.00, duree=2.30),
-    dict(nom="devise-2", texte="soin de soi", cote="gauche", debut=1.25, duree=1.55),
-    dict(nom="trait", texte="", cote="trait", debut=2.35, duree=1.05),
-    dict(nom="maison", texte="La maison", cote="droite", debut=3.05, duree=1.25, lien="#philosophie"),
-    dict(nom="rituels", texte="Les rituels", cote="droite", debut=3.55, duree=1.45, lien="#rituels"),
-    dict(nom="drainage", texte="Le drainage lymphatique", cote="droite", debut=4.05, duree=2.35, lien="#drainage"),
-    dict(nom="philosophie", texte="La philosophie", cote="droite", debut=4.70, duree=1.75, lien="#geste"),
-    dict(nom="univers", texte="L’univers", cote="droite", debut=5.35, duree=1.30, lien="#univers"),
-    dict(nom="peachy", texte="Peachy", cote="grand", debut=6.55, duree=2.10),
-    dict(nom="lymphatic", texte="Lymphatic Therapy", cote="dessous", debut=7.95, duree=1.55),
+    dict(nom="devise-1", texte="L’art de prendre", cote="gauche", debut=0.00, duree=1.75, aiguilles=3),
+    dict(nom="devise-2", texte="soin de soi", cote="gauche", debut=0.55, duree=1.55, aiguilles=2),
+    dict(nom="trait", texte="", cote="trait", debut=1.80, duree=0.85, aiguilles=2),
+    dict(nom="maison", texte="La maison", cote="droite", debut=2.40, duree=1.05, aiguilles=2),
+    dict(nom="rituels", texte="Les rituels", cote="droite", debut=2.70, duree=1.15, aiguilles=2),
+    dict(nom="drainage", texte="Le drainage lymphatique", cote="droite", debut=3.00, duree=1.80, aiguilles=3),
+    dict(nom="philosophie", texte="La philosophie", cote="droite", debut=3.50, duree=1.40, aiguilles=2),
+    dict(nom="univers", texte="L’univers", cote="droite", debut=4.00, duree=1.10, aiguilles=2),
+    dict(nom="peachy", texte="Peachy", cote="grand", debut=5.50, duree=1.65, aiguilles=3),
+    dict(nom="lymphatic", texte="Lymphatic Therapy", cote="dessous", debut=6.45, duree=1.25, aiguilles=3),
 ]
+
+# Un point de broderie : la longueur de fil posée à chaque piqûre, en pixels image.
+# Légèrement exagérée, pour que les points se lisent.
+PAS_POINT = 3.0
+PAS_GRAND = 4.4
+SAUT = 2200.0             # vitesse de l'aiguille entre deux morceaux, en pixels par seconde
 
 
 # ── 1. Masque du fil ─────────────────────────────────────────────────────────
@@ -286,28 +294,101 @@ def ranger(fil):
     return etiquettes, rangs
 
 
+def traits_d_une_lettre(squelette):
+    """Les traits d'une lettre : le parcours de l'aiguille, coupé à chaque saut."""
+    ordre, _ = parcours(squelette)
+    traits, courant = [], ordre[:1]
+    for a, b in zip(ordre, ordre[1:]):
+        if max(abs(b[0] - a[0]), abs(b[1] - a[1])) > 1:
+            traits.append(courant)
+            courant = [b]
+        else:
+            courant.append(b)
+    traits.append(courant)
+    return [np.array(t, np.float32) for t in traits if len(t) >= 5]   # les barbes du squelette sont laissées
+
+
+def morceler(trait, court, long, rng):
+    """Coupe un trait en morceaux de longueurs inégales. Retourne (points, abscisse le long du trait)."""
+    pas = np.hypot(*np.diff(trait, axis=0).T)
+    s = np.r_[0.0, np.cumsum(pas)]
+    coupes, ici = [0.0], 0.0
+    while s[-1] - ici > long:
+        ici += rng.uniform(court, long)
+        coupes.append(ici)
+    if len(coupes) > 1 and s[-1] - coupes[-1] < court * 0.6:
+        coupes.pop()
+    coupes.append(s[-1] + 1)
+    return [(trait[m], s[m]) for a, b in zip(coupes, coupes[1:]) if (m := (s >= a) & (s < b)).sum() >= 2]
+
+
 def carte_couture(fil):
+    """Décide où et quand chaque point de broderie est posé.
+
+    La couture n'avance pas lettre après lettre : chaque ligne est confiée à plusieurs aiguilles,
+    qui cousent des morceaux de lettres dans un ordre mêlé, en sautant de l'un à l'autre.
+    Chaque morceau se coud point par point.
+    """
     h, w = fil.shape
     etiquettes, rangs = ranger(fil)
+    _, _, stats, _ = cv2.connectedComponentsWithStats(fil, 8)
     fin = max(g["debut"] + g["duree"] for g in GROUPES)
-    instant_sq = np.zeros((h, w), np.float32)     # instant de couture, posé sur les squelettes
-    groupe_sq = np.zeros((h, w), np.uint8)
+    rng = np.random.default_rng(5)
+    instant_sq = np.zeros((h, w), np.float32)     # instant où le point est posé, sur les squelettes
+    phase_sq = np.zeros((h, w), np.float32)       # position dans le point (pour le relief des points)
+    groupe_sq = np.zeros((h, w), np.uint8)        # numéro du groupe : chaque mot peut être déplacé seul
     squelettes = np.zeros((h, w), bool)
     infos = []
     for rang, g in enumerate(GROUPES, start=1):
-        lettres = []
+        grand = g["cote"] == "grand"
+        pas = PAS_GRAND if grand else PAS_POINT
+        court, long = (46, 96) if grand else (30, 64) if g["cote"] == "trait" else (20, 46)
+        morceaux = []
         for i in rangs[g["nom"]]:
-            ordre, longueurs = parcours(skeletonize(etiquettes == i))
-            lettres.append((ordre, longueurs))
-        saut = 14.0  # distance comptée entre deux lettres : le temps de déplacer le tambour
-        total = sum(l[-1] for _, l in lettres) + saut * (len(lettres) - 1)
-        cumul = 0.0
-        for ordre, longueurs in lettres:
-            for (y, x), s in zip(ordre, longueurs):
-                instant_sq[y, x] = g["debut"] + g["duree"] * (cumul + s) / total
-                groupe_sq[y, x] = rang
-                squelettes[y, x] = True
-            cumul += longueurs[-1] + saut
+            for trait in traits_d_une_lettre(skeletonize(etiquettes == i)):
+                for pts, abscisse in morceler(trait, court, long, rng):
+                    morceaux.append(dict(pts=pts, s=abscisse))
+        # Ordre : dans le sens de la lecture en gros, mêlé dans le détail.
+        axe = 0 if g["cote"] == "trait" else 1
+        milieux = np.array([m["pts"][:, axe].mean() for m in morceaux])
+        rang_lecture = (milieux - milieux.min()) / max(1.0, np.ptp(milieux))
+        ordre = np.argsort(0.7 * rang_lecture + 0.3 * rng.random(len(morceaux)))
+        aiguilles = []
+        for k in range(g["aiguilles"]):
+            miens = [morceaux[j] for j in ordre[k::g["aiguilles"]]]
+            # chaque morceau est pris par le bout le plus proche de là où l'aiguille vient de sortir
+            sortie, sauts = None, []
+            for m in miens:
+                if sortie is not None and np.hypot(*(m["pts"][-1] - sortie)) < np.hypot(*(m["pts"][0] - sortie)):
+                    m["pts"], m["s"], m["retour"] = m["pts"][::-1], m["s"][::-1], True
+                sauts.append(0.0 if sortie is None else float(np.hypot(*(m["pts"][0] - sortie))) / SAUT + 0.008)
+                sortie = m["pts"][-1]
+            longueur = sum(abs(m["s"][-1] - m["s"][0]) for m in miens)
+            depart = g["debut"] + 0.05 * k
+            vitesse = longueur / max(0.35 * g["duree"], g["debut"] + g["duree"] - depart - sum(sauts))
+            t = depart
+            trajet = dict(t=[], x=[], y=[], sauts=[])
+            for m, saut in zip(miens, sauts):
+                t += saut
+                d = np.abs(m["s"] - m["s"][0])                      # fil déjà cousu dans ce morceau
+                points = np.floor(m["s"] / pas).astype(int)         # numéro du point, compté le long du trait
+                for n in np.unique(points):
+                    ici = points == n
+                    ys, xs = m["pts"][ici].astype(int).T
+                    instant_sq[ys, xs] = t + d[ici].max() / vitesse  # le point apparaît quand il est fini
+                ys, xs = m["pts"].astype(int).T
+                phase_sq[ys, xs] = 2 * np.pi * m["s"] / pas
+                groupe_sq[ys, xs] = rang
+                squelettes[ys, xs] = True
+                # trajet de l'aiguille, pour dessiner son fil
+                if trajet["t"]:
+                    trajet["sauts"].append(len(trajet["t"]) - 1)
+                reperes = np.unique(np.r_[np.arange(0, len(d), 7), len(d) - 1])
+                trajet["t"] += [round(float(t + d[j] / vitesse), 3) for j in reperes]
+                trajet["x"] += [round(float(m["pts"][j][1]), 1) for j in reperes]
+                trajet["y"] += [round(float(m["pts"][j][0]), 1) for j in reperes]
+                t += d[-1] / vitesse
+            aiguilles.append(trajet)
         ys, xs = np.nonzero(np.isin(etiquettes, rangs[g["nom"]]))
         (cx, cy), (bw, bh), angle = cv2.minAreaRect(np.column_stack([xs, ys]).astype(np.float32))
         if bw < bh and g["cote"] != "trait":
@@ -315,28 +396,70 @@ def carte_couture(fil):
         if g["cote"] == "trait":
             angle = 0.0
             bw, bh = float(xs.max() - xs.min()), float(ys.max() - ys.min())
+        # Les mots du groupe (boîtes), pour pouvoir le couper en deux lignes dans une autre disposition.
+        boites = sorted(([int(stats[i, 0]), int(stats[i, 1]), int(stats[i, 0] + stats[i, 2]), int(stats[i, 1] + stats[i, 3])]
+                         for i in rangs[g["nom"]]), key=lambda b: b[0])
+        seuil = 0.5 * float(np.median([b[3] - b[1] for b in boites]))
+        mots = [list(boites[0])]
+        for b in boites[1:]:
+            if b[0] - mots[-1][2] > seuil:
+                mots.append(list(b))
+            else:
+                mots[-1] = [mots[-1][0], min(mots[-1][1], b[1]), b[2], max(mots[-1][3], b[3])]
         infos.append(dict(
-            nom=g["nom"], texte=g["texte"], lien=g.get("lien"),
-            debut=g["debut"], duree=g["duree"], lettres=len(lettres),
+            nom=g["nom"], texte=g["texte"], lien=g.get("lien"), mots=mots,
+            debut=g["debut"], duree=g["duree"], grand=grand,
             boite=[round(float(xs.min())), round(float(ys.min())), round(float(xs.max())), round(float(ys.max()))],
             cadre=dict(cx=round(cx, 1), cy=round(cy, 1), l=round(bw, 1), h=round(bh, 1), angle=round(angle, 2)),
+            aiguilles=aiguilles,
         ))
-        print(f"  {g['nom']:<12} {len(lettres):>2} lettres · {total:6.0f} px de fil · {g['debut']:.2f} → {g['debut'] + g['duree']:.2f} s")
-    # Chaque pixel proche d'un fil prend l'instant du point de squelette le plus proche :
-    # le fil avance le long du trait, et le front de couture lui est perpendiculaire.
-    dist, proche = cv2.distanceTransformWithLabels((~squelettes).astype(np.uint8), cv2.DIST_L2, 5, labelType=cv2.DIST_LABEL_PIXEL)
-    table_t = np.zeros(proche.max() + 1, np.float32)
-    table_g = np.zeros(proche.max() + 1, np.uint8)
-    table_t[proche[squelettes]] = instant_sq[squelettes]
-    table_g[proche[squelettes]] = groupe_sq[squelettes]
+        fil_total = sum(abs(m["s"][-1] - m["s"][0]) for m in morceaux)
+        print(f"  {g['nom']:<12} {len(morceaux):>3} morceaux · {fil_total:5.0f} px de fil · {g['aiguilles']} aiguilles · "
+              f"{g['debut']:.2f} → {g['debut'] + g['duree']:.2f} s")
+    # Chaque pixel proche d'un fil prend les valeurs du point de squelette le plus proche :
+    # un point de broderie est une petite barre posée en travers du trait.
+    _, proche = cv2.distanceTransformWithLabels((~squelettes).astype(np.uint8), cv2.DIST_L2, 5, labelType=cv2.DIST_LABEL_PIXEL)
+    def etendre(valeurs):
+        table = np.zeros(proche.max() + 1, valeurs.dtype)
+        table[proche[squelettes]] = valeurs[squelettes]
+        return table[proche]
     # Emprise : le fil et l'ombre qu'il creuse dans la bouclette, puis un fondu vers la serviette nue.
     au_fil = cv2.distanceTransform((1 - fil).astype(np.uint8), cv2.DIST_L2, 5)
     emprise = np.clip(1 - (au_fil - 6) / 11, 0, 1)
     emprise = emprise * emprise * (3 - 2 * emprise)
-    instant = np.where(emprise > 0, table_t[proche], 0.0)
-    code = np.round(np.clip(instant / fin, 0, 1) * 65535).astype(np.uint32)
+    dedans = emprise > 0
+    fin = max(fin, float(instant_sq.max()))
+    code = np.round(np.clip(np.where(dedans, etendre(instant_sq), 0.0) / fin, 0, 1) * 65535).astype(np.uint32)
     carte = np.dstack([(code >> 8).astype(np.uint8), (code & 255).astype(np.uint8), np.round(emprise * 255).astype(np.uint8)])
-    return carte, infos, fin, squelettes
+    phase = etendre(phase_sq)
+    points = np.dstack([
+        np.where(dedans, np.round(np.cos(phase) * 127 + 128), 128),
+        np.where(dedans, np.round(np.sin(phase) * 127 + 128), 128),
+        np.where(dedans, etendre(groupe_sq) * 20, 0),
+    ]).astype(np.uint8)
+    return carte, points, infos, fin, squelettes
+
+
+def lisere_haut(nue, groupes):
+    """La droite du liseré qui borde la bande tissée par le haut : y = a + b·x.
+    Les lignes brodées d'une autre disposition ne descendent jamais en dessous."""
+    gris = nue.mean(2)
+    detail = gris - cv2.GaussianBlur(gris, (0, 0), 9)
+    grandes = next(g for g in groupes if g["grand"])["mots"]
+    # le haut des grandes lettres du logo, par colonne
+    xs = np.array([(m[0] + m[2]) / 2 for m in grandes])
+    ys = np.array([m[1] for m in grandes], float)
+    pente, origine = np.polyfit(xs, ys, 1) if len(xs) > 1 else (0.0, ys[0])
+    points = []
+    for x in range(int(xs.min()), int(xs.max()), 40):
+        haut = int(origine + pente * x)
+        colonne = detail[max(0, haut - 95):haut - 8, x - 6:x + 6].mean(1)
+        points.append((x, max(0, haut - 95) + int(np.argmax(colonne))))
+    px, py = np.array(points).T
+    b_, a_ = np.polyfit(px, py, 1)
+    garde = np.abs(py - (a_ + b_ * px)) < 12            # on écarte les colonnes où un pli a trompé la mesure
+    b_, a_ = np.polyfit(px[garde], py[garde], 1)
+    return [round(float(a_), 1), round(float(b_), 4)]
 
 
 # ── 4. Prolongement sur les côtés ────────────────────────────────────────────
@@ -489,6 +612,8 @@ def lumiere_des_plis(nue):
         continu = ligne[src_x]
         w_ = np.clip((d - 8) / (95 - 8), 0, 1)
         w_ = (w_ * w_ * (3 - 2 * w_))[..., None]
+        calme = 1 - 0.4 * np.clip((d - 300 / e) / (1100 / e), 0, 1)[..., None]
+        champ = moyenne + (champ - moyenne) * calme
         ext = continu * (1 - w_) + champ * w_
         return ext[::-1] if vers_le_haut else ext
 
@@ -593,7 +718,7 @@ def main():
         print("serviette nue : reconstituée (aucune image fournie)")
         nue = serviette_nue(img8, fil)
     print("ordre de couture…")
-    carte, groupes, fin, squelettes = carte_couture(fil)
+    carte, points, groupes, fin, squelettes = carte_couture(fil)
     print("prolongements, plis et grain…")
     large = prolonger_cotes(nue)
     plis, moyenne = lumiere_des_plis(large)
@@ -602,6 +727,7 @@ def main():
     webp(img8, OUT / "serviette-brodee.webp")
     webp(large, OUT / "serviette-nue.webp")
     Image.fromarray(carte).save(OUT / "couture.png", optimize=True)
+    Image.fromarray(points).save(OUT / "points.png", optimize=True)
     webp(plis, OUT / "plis.webp", 92)
     Image.fromarray(tuile).save(OUT / "eponge.png", optimize=True)
 
@@ -614,11 +740,12 @@ def main():
         grain=round(contraste, 4),
         # la boîte de tout ce qui est brodé : le cadrage ne la coupe jamais
         broderie=[int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())],
+        lisere=lisere_haut(nue, groupes),
         groupes=groupes,
     )
     DONNEES.write_text(
         "// Écrit par tools/serviette.py : ne pas modifier à la main.\n"
-        f"export const serviette = {json.dumps(donnees, ensure_ascii=False, indent=2)};\n",
+        f"export const serviette = {json.dumps(donnees, ensure_ascii=False, separators=(',', ':'))};\n",
         encoding="utf-8",
     )
     for f in sorted(OUT.iterdir()):
